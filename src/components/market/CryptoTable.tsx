@@ -14,13 +14,13 @@ const FILTERS = [
   { label: "Top 50", key: "top50" },
   { label: "Top 100", key: "top100" },
   { label: "Favoritas", key: "favorites" },
-  { label: "DeFi", key: "defi" },
-  { label: "Memecoins", key: "memes" },
+  { label: "DeFi", key: "decentralized-finance-defi" },
+  { label: "Memecoins", key: "meme-token" },
   { label: "AI", key: "artificial-intelligence" },
   { label: "Gaming", key: "gaming" },
   { label: "Layer 1", key: "layer-1" },
   { label: "Layer 2", key: "layer-2" },
-  { label: "RWA", key: "real-world-assets" },
+  { label: "RWA", key: "real-world-assets-rwa" },
 ];
 
 const FAV_KEY = "cryptopulse-favorites";

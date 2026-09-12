@@ -27,7 +27,7 @@ export default function Memecoins() {
 
   const [sort, setSort] = useState("cap");
   const navigate = useNavigate();
-  const { data: coins, isError, dataUpdatedAt } = useMarkets(60, "memes");
+  const { data: coins, isError, dataUpdatedAt } = useMarkets(60, "meme-token");
   const { data: trending } = useTrending();
 
   const rows = useMemo(() => {
