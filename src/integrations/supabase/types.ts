@@ -3360,6 +3360,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      news_cache: {
+        Row: {
+          cache_key: string
+          fetched_at: string
+          payload: Json
+        }
+        Insert: {
+          cache_key: string
+          fetched_at?: string
+          payload: Json
+        }
+        Update: {
+          cache_key?: string
+          fetched_at?: string
+          payload?: Json
+        }
+        Relationships: []
+      }
       news_summaries: {
         Row: {
           created_at: string

@@ -1,16 +1,16 @@
-// Notícias cripto — API pública do CryptoCompare (sem chave).
+// Notícias cripto — buscadas via função de backend (fetch-news), que chama a
+// fonte externa (CryptoCompare) com a chave guardada como segredo e aplica cache.
+import { supabase } from "@/integrations/supabase/client";
 import type { NewsArticle } from "./types";
 
-const BASE = "https://min-api.cryptocompare.com/data/v2/news/";
+export async function getNews(lang = "EN", count = 30, categories?: string): Promise<NewsArticle[]> {
+  const { data, error } = await supabase.functions.invoke("fetch-news", {
+    body: { lang, limit: count, categories },
+    headers: { "Content-Type": "application/json" },
+  });
 
-async function get<T>(path: string): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, { signal: AbortSignal.timeout(15000) });
-  if (!res.ok) throw new Error(`News API error ${res.status}`);
-  return (await res.json()) as T;
-}
-
-export function getNews(lang = "EN", count = 30, categories?: string): Promise<NewsArticle[]> {
-  const params = new URLSearchParams({ lang, sortOrder: "latest", excludeCategories: "Sponsored" });
-  if (categories) params.set("categories", categories);
-  return get<{ Data: NewsArticle[] }>(`?${params.toString()}`).then((d) => d.Data ?? []);
+  if (error) {
+    throw new Error(error.message ?? "News API error");
+  }
+  return (data?.Data ?? []) as NewsArticle[];
 }
