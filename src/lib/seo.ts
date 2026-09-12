@@ -34,10 +34,11 @@ export function useSeo({ title, description, path = "/", image, type = "website"
     upsertMeta("property", "og:type", type);
     upsertMeta("property", "og:url", url);
     upsertMeta("property", "og:site_name", "CryptoPulse");
-    upsertMeta("property", "og:image", image ?? `${origin}/og-cover.png`);
+    upsertMeta("property", "og:image", image ?? "https://cdn.enter.pro/resources/uid_100541343/cryptopulse-og_78528c41.png");
     upsertMeta("name", "twitter:card", "summary_large_image");
     upsertMeta("name", "twitter:title", title);
     upsertMeta("name", "twitter:description", description ?? "");
+    upsertMeta("name", "twitter:image", image ?? "https://cdn.enter.pro/resources/uid_100541343/cryptopulse-og_78528c41.png");
 
     let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
     if (!canonical) {

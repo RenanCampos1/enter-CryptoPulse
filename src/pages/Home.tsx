@@ -22,6 +22,7 @@ export default function Home() {
   });
 
   const { data: coins, isError: coinsError, dataUpdatedAt } = useMarkets(100);
+  const bitcoin = coins?.find((c) => c.id === "bitcoin");
   const { data: articles, isError: newsError } = useNews();
   const { current, previous } = useFearGreedLatest();
   const fg = current ? Number(current.value) : undefined;
@@ -68,7 +69,7 @@ export default function Home() {
       <OverviewCards />
 
       {/* BITCOIN */}
-      <BitcoinCard />
+      <BitcoinCard coin={bitcoin} />
 
       {/* GAINERS / LOSERS */}
       <div className="grid gap-6 xl:grid-cols-2">

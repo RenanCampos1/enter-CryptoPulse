@@ -6,8 +6,9 @@ export interface SharePayload {
   url?: string;
 }
 
-/** Captura um nó do DOM como PNG (dataURL). */
+/** Captura um nó do DOM como PNG (dataURL). html2canvas é carregado sob demanda. */
 export async function captureNodeAsPng(node: HTMLElement): Promise<string> {
+  const html2canvas = (await import("html2canvas")).default;
   const canvas = await html2canvas(node, {
     backgroundColor: "#080B10",
     scale: 2,

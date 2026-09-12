@@ -1,16 +1,18 @@
+import { lazy } from "react";
 import { Layout } from "./components/layout/Layout";
-import Home from "./pages/Home";
-import Market from "./pages/Market";
-import Gainers from "./pages/Gainers";
-import Losers from "./pages/Losers";
-import Trending from "./pages/Trending";
-import Memecoins from "./pages/Memecoins";
-import News from "./pages/News";
-import FearGreed from "./pages/FearGreed";
-import Calendar from "./pages/Calendar";
-import CryptoDetail from "./pages/CryptoDetail";
-import PostGenerator from "./pages/PostGenerator";
-import NotFound from "./pages/NotFound";
+
+const Home = lazy(() => import("./pages/Home"));
+const Market = lazy(() => import("./pages/Market"));
+const Gainers = lazy(() => import("./pages/Gainers"));
+const Losers = lazy(() => import("./pages/Losers"));
+const Trending = lazy(() => import("./pages/Trending"));
+const Memecoins = lazy(() => import("./pages/Memecoins"));
+const News = lazy(() => import("./pages/News"));
+const FearGreed = lazy(() => import("./pages/FearGreed"));
+const Calendar = lazy(() => import("./pages/Calendar"));
+const CryptoDetail = lazy(() => import("./pages/CryptoDetail"));
+const PostGenerator = lazy(() => import("./pages/PostGenerator"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 export const routers = [
   {

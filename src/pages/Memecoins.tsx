@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Frog } from "lucide-react";
+import { Flame } from "lucide-react";
 import { useSeo } from "@/lib/seo";
 import { useMarkets, useTrending } from "@/lib/hooks";
 import { formatPrice, formatCompact, formatPercent } from "@/lib/format";
@@ -109,7 +109,7 @@ export default function Memecoins() {
                             {coin.name}
                             {trend ? (
                               <span className="flex items-center gap-0.5 rounded-md bg-warning/15 px-1 py-0.5 text-[10px] font-semibold text-warning">
-                                <Frog className="h-2.5 w-2.5" /> Trending
+                                <Flame className="h-2.5 w-2.5" /> Trending
                               </span>
                             ) : null}
                           </div>

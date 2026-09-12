@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Treemap, ResponsiveContainer, Tooltip } from "recharts";
 import { LayoutGrid } from "lucide-react";
 import { useMarkets } from "@/lib/hooks";
-import { formatPrice, formatPercent } from "@/lib/format";
+import { formatCompact, formatPercent } from "@/lib/format";
 import { trackCoinClick } from "@/lib/analytics";
 import { ErrorState } from "./ErrorState";
 
@@ -25,7 +25,19 @@ function cellColor(change: number): { bg: string; text: string } {
   return { bg: `rgba(234,57,67,${alpha.toFixed(2)})`, text: "#F5F7FA" };
 }
 
-function HeatCell(props: any) {
+interface HeatCellProps {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  symbol?: string;
+  current_price?: number;
+  price_change_percentage_24h?: number;
+  id?: string;
+  onPick?: (id: string) => void;
+}
+
+function HeatCell(props: HeatCellProps) {
   const { x, y, width, height, symbol, current_price, price_change_percentage_24h, id, onPick } = props;
   const isSmall = width < 46 || height < 30;
   const isTiny = width < 30 || height < 22;
@@ -52,7 +64,7 @@ function HeatCell(props: any) {
           {!isSmall && (
             <>
               <text x={x + 6} y={y + 33} fill="rgba(245,247,250,0.9)" fontSize={10}>
-                {formatPrice(current_price)}
+                {formatCompact(current_price)}
               </text>
               <text x={x + 6} y={y + 47} fill="rgba(245,247,250,0.95)" fontSize={10} fontWeight={600}>
                 {formatPercent(price_change_percentage_24h)}
@@ -65,7 +77,12 @@ function HeatCell(props: any) {
   );
 }
 
-function HeatTooltip({ active, payload }: any) {
+interface HeatTooltipProps {
+  active?: boolean;
+  payload?: Array<{ payload: HeatCoin }>;
+}
+
+function HeatTooltip({ active, payload }: HeatTooltipProps) {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload as HeatCoin;
   return (

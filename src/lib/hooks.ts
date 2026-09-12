@@ -22,8 +22,9 @@ export function useGlobalData() {
     queryKey: QUERY_KEYS.global,
     queryFn: getGlobalData,
     staleTime: 30_000,
-    refetchInterval: 30_000,
-    retry: 1,
+    refetchInterval: 60_000,
+    // backoff exponencial padrão (1s, 2s, 4s) para conviver com rate-limit
+    retry: 3,
   });
 }
 

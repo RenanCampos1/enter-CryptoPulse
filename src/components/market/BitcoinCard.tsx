@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
 import { TrendingUp, TrendingDown, ArrowUpRight } from "lucide-react";
-import { useCoinMarkets } from "@/lib/hooks";
-import { formatPrice, formatCompact, formatPercent, formatNumber, changeColorClass } from "@/lib/format";
+import { formatPrice, formatCompact, formatPercent, changeColorClass } from "@/lib/format";
 import { trackCoinClick } from "@/lib/analytics";
 import { PriceChart } from "./PriceChart";
 import { CoinShareButton } from "@/components/share/CoinShareCard";
-import { ErrorState } from "./ErrorState";
+import type { MarketCoin } from "@/lib/api/types";
 
 function Metric({ label, value, valueClass }: { label: string; value: string; valueClass?: string }) {
   return (
@@ -16,19 +15,16 @@ function Metric({ label, value, valueClass }: { label: string; value: string; va
   );
 }
 
-export function BitcoinCard() {
-  const { data: coins, isLoading, isError, dataUpdatedAt } = useCoinMarkets(["bitcoin"]);
-  const btc = coins?.[0];
+export function BitcoinCard({ coin }: { coin?: MarketCoin }) {
+  const btc = coin;
+  const loading = !btc;
 
   return (
     <section className="card-glow relative overflow-hidden rounded-2xl border border-border/60 bg-card p-5 md:p-6">
       <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-warning/10 blur-3xl" />
 
-      {isError ? (
-        <ErrorState lastUpdated={dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString("pt-BR") : undefined} />
-      ) : (
-        <div className="relative">
-          <div className="flex flex-wrap items-start justify-between gap-3">
+      <div className="relative">
+        <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="flex items-center gap-3">
               {btc?.image ? (
                 <img src={btc.image} alt="Bitcoin" className="h-10 w-10 rounded-full bg-card-secondary" />
@@ -66,11 +62,11 @@ export function BitcoinCard() {
             <div>
               <div className="text-xs text-muted-foreground">Preço atual</div>
               <div className="font-mono-nums text-3xl font-bold text-foreground sm:text-4xl">
-                {isLoading && !btc ? "—" : formatPrice(btc?.current_price)}
+                {loading ? "—" : formatPrice(btc?.current_price)}
               </div>
             </div>
             <div className="flex items-center gap-2 pb-1">
-              {isLoading && !btc ? (
+              {loading ? (
                 <span className="h-6 w-20 animate-pulse rounded bg-card-secondary" />
               ) : (
                 <>
@@ -107,7 +103,6 @@ export function BitcoinCard() {
             <PriceChart coinId="bitcoin" height={260} />
           </div>
         </div>
-      )}
     </section>
   );
 }
