@@ -1,0 +1,19 @@
+{
+  "name": "CryptoPulse — O mercado cripto em um só lugar",
+  "short_name": "CryptoPulse",
+  "description": "Preços, notícias, tendências e indicadores do mercado de criptomoedas em tempo real.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#080B10",
+  "theme_color": "#080B10",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

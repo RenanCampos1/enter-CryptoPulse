@@ -1,0 +1,57 @@
+import { useEffect } from "react";
+
+interface SeoOptions {
+  title: string;
+  description?: string;
+  path?: string;
+  image?: string;
+  type?: "website" | "article";
+}
+
+function upsertMeta(attr: "name" | "property", key: string, content: string) {
+  let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
+  if (!el) {
+    el = document.createElement("meta");
+    el.setAttribute(attr, key);
+    document.head.appendChild(el);
+  }
+  el.setAttribute("content", content);
+}
+
+/**
+ * Aplica SEO client-side (SPA): título, description, Open Graph e canonical.
+ * O sitemap estático cobre as rotas principais para indexação.
+ */
+export function useSeo({ title, description, path = "/", image, type = "website" }: SeoOptions) {
+  useEffect(() => {
+    const origin = window.location.origin;
+    const url = `${origin}${path}`;
+
+    document.title = title;
+    upsertMeta("name", "description", description ?? "");
+    upsertMeta("property", "og:title", title);
+    upsertMeta("property", "og:description", description ?? "");
+    upsertMeta("property", "og:type", type);
+    upsertMeta("property", "og:url", url);
+    upsertMeta("property", "og:site_name", "CryptoPulse");
+    upsertMeta("property", "og:image", image ?? `${origin}/og-cover.png`);
+    upsertMeta("name", "twitter:card", "summary_large_image");
+    upsertMeta("name", "twitter:title", title);
+    upsertMeta("name", "twitter:description", description ?? "");
+
+    let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.setAttribute("rel", "canonical");
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute("href", url);
+  }, [title, description, path, image, type]);
+}
+
+export const siteName = "CryptoPulse";
+export const siteTagline = "O mercado cripto em um só lugar.";
+
+export function coinSeoTitle(name: string, symbol: string): string {
+  return `${name} Hoje: Cotação, Preço, Gráfico e Notícias | ${siteName}`;
+}

@@ -3360,7 +3360,39 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      news_summaries: {
+        Row: {
+          created_at: string
+          id: number
+          impact: string
+          lang: string
+          news_id: string
+          summary: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: never
+          impact: string
+          lang?: string
+          news_id: string
+          summary: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: never
+          impact?: string
+          lang?: string
+          news_id?: string
+          summary?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

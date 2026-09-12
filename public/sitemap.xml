@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>/</loc><changefreq>always</changefreq><priority>1.0</priority></url>
+  <url><loc>/market</loc><changefreq>always</changefreq><priority>0.9</priority></url>
+  <url><loc>/gainers</loc><changefreq>always</changefreq><priority>0.8</priority></url>
+  <url><loc>/losers</loc><changefreq>always</changefreq><priority>0.8</priority></url>
+  <url><loc>/trending</loc><changefreq>always</changefreq><priority>0.8</priority></url>
+  <url><loc>/memecoins</loc><changefreq>always</changefreq><priority>0.8</priority></url>
+  <url><loc>/news</loc><changefreq>hourly</changefreq><priority>0.8</priority></url>
+  <url><loc>/fear-greed</loc><changefreq>hourly</changefreq><priority>0.7</priority></url>
+  <url><loc>/calendar</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>/post-generator</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>/crypto/bitcoin</loc><changefreq>always</changefreq><priority>0.9</priority></url>
+  <url><loc>/crypto/ethereum</loc><changefreq>always</changefreq><priority>0.9</priority></url>
+  <url><loc>/crypto/solana</loc><changefreq>always</changefreq><priority>0.8</priority></url>
+  <url><loc>/crypto/xrp</loc><changefreq>always</changefreq><priority>0.8</priority></url>
+  <url><loc>/crypto/dogecoin</loc><changefreq>always</changefreq><priority>0.8</priority></url>
+  <url><loc>/crypto/shiba-inu</loc><changefreq>always</changefreq><priority>0.8</priority></url>
+  <url><loc>/crypto/bnb</loc><changefreq>always</changefreq><priority>0.7</priority></url>
+  <url><loc>/crypto/cardano</loc><changefreq>always</changefreq><priority>0.7</priority></url>
+  <url><loc>/crypto/avalanche-2</loc><changefreq>always</changefreq><priority>0.7</priority></url>
+  <url><loc>/crypto/polkadot</loc><changefreq>always</changefreq><priority>0.7</priority></url>
+  <url><loc>/crypto/chainlink</loc><changefreq>always</changefreq><priority>0.7</priority></url>
+  <url><loc>/crypto/pepe</loc><changefreq>always</changefreq><priority>0.7</priority></url>
+</urlset>
