@@ -43,8 +43,8 @@ export function TrendingSection({ limit }: { limit?: number }) {
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <img src={t.item.small} alt={t.item.name} className="h-8 w-8 rounded-full bg-card-secondary" loading="lazy" />
-                  <div className="leading-tight">
+                  <img src={t.item.small} alt={t.item.name} className="h-8 w-8 shrink-0 rounded-full bg-card-secondary" loading="lazy" />
+                  <div className="min-w-0 leading-tight">
                     <div className="max-w-[110px] truncate text-sm font-semibold text-foreground">{t.item.name}</div>
                     <div className="text-xs uppercase text-muted-foreground">{t.item.symbol}</div>
                   </div>

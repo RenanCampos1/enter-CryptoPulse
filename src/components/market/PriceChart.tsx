@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from "recharts";
 import { useMarketChart } from "@/lib/hooks";
-import { formatPrice, formatClock } from "@/lib/format";
+import { formatPrice, formatCompactRaw, formatClock } from "@/lib/format";
 import { ErrorState } from "./ErrorState";
 import { cn } from "@/lib/utils";
 import type { ChartPeriod } from "@/lib/api/types";
@@ -99,8 +99,8 @@ export function PriceChart({ coinId, height = 300, className }: { coinId: string
                 tick={{ fill: "#8B98A8", fontSize: 11 }}
                 axisLine={false}
                 tickLine={false}
-                width={60}
-                tickFormatter={(v: number) => formatPrice(v)}
+                width={52}
+                tickFormatter={(v: number) => formatCompactRaw(v)}
               />
               <Tooltip content={<ChartTooltipBody />} />
               <Area

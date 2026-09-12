@@ -35,6 +35,12 @@ export function formatCompact(value: number | null | undefined): string {
   return "$" + compactFormatter.format(value);
 }
 
+/** Compacto sem prefixo de moeda (ex.: "8,65 mi") — usado em eixos de gráfico. */
+export function formatCompactRaw(value: number | null | undefined): string {
+  if (value === null || value === undefined || Number.isNaN(value)) return "";
+  return compactFormatter.format(value);
+}
+
 export function formatNumber(value: number | null | undefined): string {
   if (value === null || value === undefined || Number.isNaN(value)) return "—";
   return numberFormatter.format(value);

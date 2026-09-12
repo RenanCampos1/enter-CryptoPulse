@@ -1,6 +1,7 @@
 // Camada de acesso à API pública da CoinGecko (sem chave, sem env vars).
 // Para trocar de provider no futuro, substitua as funções deste arquivo.
 
+import { supabase } from "@/integrations/supabase/client";
 import type {
   ChartPeriod,
   ChartPoint,
@@ -34,8 +35,19 @@ async function get<T>(path: string, params: Record<string, string | number | boo
   }
 }
 
-export function getGlobalData(): Promise<GlobalData> {
-  return get<GlobalData>("/global");
+/**
+ * Dados globais via função de backend (market-global) com cache compartilhado,
+ * para evitar rate-limit da CoinGecko e reduzir chamadas com tráfego alto.
+ */
+export async function getGlobalData(): Promise<GlobalData> {
+  const { data, error } = await supabase.functions.invoke("market-global", {
+    body: {},
+    headers: { "Content-Type": "application/json" },
+  });
+  if (error) {
+    throw new Error(error.message ?? "Global API error");
+  }
+  return data as GlobalData;
 }
 
 export interface MarketsParams {
@@ -56,7 +68,7 @@ export function getMarkets(params: MarketsParams = {}): Promise<MarketCoin[]> {
     per_page: params.perPage ?? 100,
     page: params.page ?? 1,
     sparkline: params.sparkline ?? true,
-    price_change_percentage: params.priceChangePerc ?? "1h,24h,7d",
+    price_change_percentage: params.priceChangePerc ?? "1h,24h,7d,30d",
     category: params.category,
     ids: params.ids,
   });

@@ -102,6 +102,9 @@ export default function News() {
         </div>
       )}
 
+      {/* Slot de anúncio reservado (entre notícias) */}
+      <div data-ad-slot="news-mid" className="hidden" />
+
       <NewsList articles={filtered} showSummaries />
     </div>
   );

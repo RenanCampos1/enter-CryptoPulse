@@ -52,13 +52,13 @@ export function RankingTable({ title, direction, coins, limit, showAllTo, shareL
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[560px] text-sm">
+        <table className="w-full min-w-[344px] text-sm">
           <thead>
             <tr className="border-b border-border/60 text-left text-xs uppercase tracking-wider text-muted-foreground">
-              <th className="px-4 py-3 font-medium">#</th>
-              <th className="px-4 py-3 font-medium">Moeda</th>
-              <th className="px-4 py-3 text-right font-medium">Preço</th>
-              <th className="px-4 py-3 text-right font-medium">24h</th>
+              <th className="px-2 py-3 font-medium">#</th>
+              <th className="px-1.5 py-3 font-medium">Moeda</th>
+              <th className="px-1.5 py-3 text-right font-medium">Preço</th>
+              <th className="px-1.5 py-3 text-right font-medium">24h</th>
               <th className="hidden px-4 py-3 text-right font-medium md:table-cell">Volume 24h</th>
               <th className="hidden px-4 py-3 text-right font-medium lg:table-cell">Market Cap</th>
               <th className="hidden px-4 py-3 text-right font-medium xl:table-cell">7d</th>
@@ -76,24 +76,24 @@ export function RankingTable({ title, direction, coins, limit, showAllTo, shareL
                   }}
                   className="cursor-pointer border-b border-border/40 transition-colors last:border-0 hover:bg-accent/50"
                 >
-                  <td className="px-4 py-3 font-mono-nums text-xs text-muted-foreground">{i + 1}</td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2.5">
+                  <td className="px-2 py-3 font-mono-nums text-xs text-muted-foreground">{i + 1}</td>
+                  <td className="px-1.5 py-3">
+                    <div className="flex items-center gap-2">
                       {coin.image ? (
-                        <img src={coin.image} alt={coin.name} className="h-7 w-7 rounded-full bg-card-secondary" loading="lazy" />
+                        <img src={coin.image} alt={coin.name} className="h-6 w-6 shrink-0 rounded-full bg-card-secondary" loading="lazy" />
                       ) : (
-                        <span className="h-7 w-7 rounded-full bg-card-secondary" />
+                        <span className="h-6 w-6 shrink-0 rounded-full bg-card-secondary" />
                       )}
-                      <div className="leading-tight">
-                        <div className="font-medium text-foreground">{coin.name}</div>
+                      <div className="min-w-0 leading-tight">
+                        <div className="max-w-[96px] truncate font-medium text-foreground">{coin.name}</div>
                         <div className="text-xs uppercase text-muted-foreground">{coin.symbol}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-right font-mono-nums">{formatPrice(coin.current_price)}</td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-1.5 py-3 text-right font-mono-nums">{formatPrice(coin.current_price)}</td>
+                  <td className="px-1.5 py-3 text-right">
                     <span
-                      className={`inline-block min-w-[72px] rounded-lg px-2 py-1 text-right font-mono-nums text-xs font-semibold ${
+                      className={`inline-block min-w-[62px] rounded-lg px-1.5 py-1 text-right font-mono-nums text-xs font-semibold ${
                         positive ? "bg-success/15 text-success" : "bg-danger/15 text-danger"
                       }`}
                     >

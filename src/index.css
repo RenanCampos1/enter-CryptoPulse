@@ -61,8 +61,21 @@
     @apply border-border;
   }
 
+  /* Permite que filhos de grid/flex encolham abaixo do min-content
+     (evita que tabelas largas com overflow-x alarguem a página no mobile). */
+  .grid > *,
+  .flex > * {
+    min-width: 0;
+  }
+
   html {
     color-scheme: dark;
+  }
+
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
   }
 
   body {

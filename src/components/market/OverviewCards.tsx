@@ -27,11 +27,14 @@ function StatCard({
         <span className="text-xs font-medium">{label}</span>
       </div>
       <div className="mt-3 font-mono-nums text-xl font-bold text-foreground sm:text-2xl">{value}</div>
-      {sub ? <div className={`mt-1 text-xs ${subClass ?? "text-muted-foreground"}`}>{sub}</div> : null}
-      {tone ? (
-        <div className="mt-1 text-xs" style={{ color: tone }}>
-          {sub}
-        </div>
+      {sub ? (
+        tone ? (
+          <div className="mt-1 text-xs" style={{ color: tone }}>
+            {sub}
+          </div>
+        ) : (
+          <div className={`mt-1 text-xs ${subClass ?? "text-muted-foreground"}`}>{sub}</div>
+        )
       ) : null}
     </div>
   );

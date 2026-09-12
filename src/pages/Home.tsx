@@ -65,11 +65,17 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Slot de anúncio reservado (topo) — ativar quando houver tráfego */}
+      <div data-ad-slot="home-top" className="hidden" />
+
       {/* OVERVIEW */}
       <OverviewCards />
 
       {/* BITCOIN */}
       <BitcoinCard coin={bitcoin} />
+
+      {/* Slot de anúncio reservado (entre conteúdos) */}
+      <div data-ad-slot="home-mid" className="hidden" />
 
       {/* GAINERS / LOSERS */}
       <div className="grid gap-6 xl:grid-cols-2">
