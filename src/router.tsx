@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import { Layout } from "./components/layout/Layout";
+import { RouteErrorPage } from "./components/RouteErrorPage";
 
 const Home = lazy(() => import("./pages/Home"));
 const Market = lazy(() => import("./pages/Market"));
@@ -19,6 +20,7 @@ export const routers = [
     path: "/",
     name: "layout",
     element: <Layout />,
+    errorElement: <RouteErrorPage />,
     children: [
       {
         path: "/",

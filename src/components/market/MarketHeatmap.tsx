@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Treemap, ResponsiveContainer, Tooltip } from "recharts";
 import { LayoutGrid } from "lucide-react";
 import { useMarkets } from "@/lib/hooks";
-import { formatCompact, formatPercent } from "@/lib/format";
+import { formatCompact, formatPrice, formatPercent } from "@/lib/format";
 import { trackCoinClick } from "@/lib/analytics";
 import { ErrorState } from "./ErrorState";
 
