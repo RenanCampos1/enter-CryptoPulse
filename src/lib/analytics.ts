@@ -43,3 +43,31 @@ export function trackPostGenerator(kind: "share" | "download", coinId: string, t
     properties: { coin_id: coinId, template },
   });
 }
+
+export function trackLanguageChanged(language: string) {
+  trackEvent("language_changed", {
+    eventType: "custom",
+    properties: { language },
+  });
+}
+
+export function trackNewsFilter(filter: string) {
+  trackEvent("news_filter_clicked", {
+    eventType: "custom",
+    properties: { filter },
+  });
+}
+
+export function trackChartPeriod(coinId: string, period: string) {
+  trackEvent("chart_period_selected", {
+    eventType: "custom",
+    properties: { coin_id: coinId, period },
+  });
+}
+
+export function trackPostGeneratorTemplate(template: string) {
+  trackEvent("post_generator_template_selected", {
+    eventType: "custom",
+    properties: { template },
+  });
+}

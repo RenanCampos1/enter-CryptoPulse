@@ -5,6 +5,7 @@ import { useSeo } from "@/lib/seo";
 import { useNews } from "@/lib/hooks";
 import { NewsList } from "@/components/market/NewsList";
 import { PageHeader } from "@/components/market/PageHeader";
+import { trackNewsFilter } from "@/lib/analytics";
 import { ErrorState } from "@/components/market/ErrorState";
 import { cn } from "@/lib/utils";
 import { formatClock } from "@/lib/format";
@@ -81,7 +82,10 @@ export default function News() {
         {filters.map((f) => (
           <button
             key={f.key}
-            onClick={() => setActive(f.key)}
+            onClick={() => {
+              setActive(f.key);
+              trackNewsFilter(f.key);
+            }}
             className={cn(
               "shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
               active === f.key

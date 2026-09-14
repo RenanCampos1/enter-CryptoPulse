@@ -5,7 +5,7 @@ import { useSeo } from "@/lib/seo";
 import { useCoinSearch, useCoinMarkets, useMarketChart } from "@/lib/hooks";
 import { useDebounce } from "@/lib/use-debounce";
 import { formatPrice, formatCompact, formatPercent, changeColorClass, formatDateShort } from "@/lib/format";
-import { trackPostGenerator, trackCoinSearch } from "@/lib/analytics";
+import { trackPostGenerator, trackCoinSearch, trackPostGeneratorTemplate } from "@/lib/analytics";
 import { downloadNodeAsPng } from "@/lib/share";
 import { PageHeader } from "@/components/market/PageHeader";
 import { Sparkline } from "@/components/market/Sparkline";
@@ -200,7 +200,10 @@ export default function PostGenerator() {
               {templates.map((tpl) => (
                 <button
                   key={tpl.key}
-                  onClick={() => setTemplate(tpl.key)}
+                  onClick={() => {
+                    setTemplate(tpl.key);
+                    trackPostGeneratorTemplate(tpl.key);
+                  }}
                   className={cn(
                     "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
                     template === tpl.key

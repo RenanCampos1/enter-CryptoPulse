@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { trackLanguageChanged } from "@/lib/analytics";
 
 import {
   Select,
@@ -24,6 +25,7 @@ export const LanguageSwitcher = ({ className }: LanguageSwitcherProps) => {
     <Select
       value={currentLanguage}
       onValueChange={(language) => {
+        trackLanguageChanged(language);
         void i18n.changeLanguage(language);
       }}
     >

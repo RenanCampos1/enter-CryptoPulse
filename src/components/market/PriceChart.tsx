@@ -3,6 +3,7 @@ import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianG
 import { useTranslation } from "react-i18next";
 import { useMarketChart } from "@/lib/hooks";
 import { formatPrice, formatCompactRaw, formatClock, activeLocale } from "@/lib/format";
+import { trackChartPeriod } from "@/lib/analytics";
 import { ErrorState } from "./ErrorState";
 import { cn } from "@/lib/utils";
 import type { ChartPeriod } from "@/lib/api/types";
@@ -56,7 +57,10 @@ export function PriceChart({ coinId, height = 300, className }: { coinId: string
           {PERIODS.map((p) => (
             <button
               key={p}
-              onClick={() => setPeriod(p)}
+              onClick={() => {
+                setPeriod(p);
+                trackChartPeriod(coinId, p);
+              }}
               className={cn(
                 "rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
                 period === p
