@@ -84,4 +84,4 @@ export async function copyToClipboard(text: string): Promise<boolean> {
   }
 }
 
-export const SITE_URL_LABEL = "CryptoPulse.com";
+export const SITE_URL_LABEL = "www.cryptopulse.xyz";

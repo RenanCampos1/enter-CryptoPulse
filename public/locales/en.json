@@ -1,6 +1,6 @@
 {
   "brand.tagline": "The crypto market in one place.",
-  "brand.shareFooter": "CryptoPulse.com — informational content, not financial advice.",
+  "brand.shareFooter": "www.cryptopulse.xyz — informational content, not financial advice.",
 
   "nav.market": "Market",
   "nav.news": "News",
@@ -282,7 +282,7 @@
   "postGenerator.share": "Share",
   "postGenerator.tipsTitle": "Posting tips",
   "postGenerator.tipsBody": "Post the card on Instagram Stories (9:16), feed (1:1) or X/LinkedIn (16:9).",
-  "postGenerator.tipsBrand": "The card includes the CryptoPulse.com branding so anyone who sees it can also find the site.",
+  "postGenerator.tipsBrand": "The card includes the www.cryptopulse.xyz branding so anyone who sees it can also find the site.",
   "postGenerator.tipsDisclaimer": "Informational content. Not an investment recommendation.",
   "postGenerator.shareDialogTitle": "Share post",
   "postGenerator.shareDialogDesc": "Choose the format and download or share your artwork.",
@@ -308,7 +308,7 @@
   "share.last24h": "in the last 24h",
   "share.up": "▲ up",
   "share.down": "▼ down",
-  "share.brand": "CryptoPulse.com",
+  "share.brand": "www.cryptopulse.xyz",
 
   "format.now": "just now",
   "format.minAgo": "{{n}} min ago",
