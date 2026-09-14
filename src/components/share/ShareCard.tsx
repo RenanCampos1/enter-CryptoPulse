@@ -1,5 +1,6 @@
 import { useRef, useState, type ReactNode } from "react";
 import { Loader2, Share2, Download } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -46,6 +47,7 @@ export function ShareCard({
   onDownloaded,
   children,
 }: ShareCardProps) {
+  const { t } = useTranslation();
   const [format, setFormat] = useState<ShareFormat>("1:1");
   const [busy, setBusy] = useState<"download" | "share" | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -128,7 +130,7 @@ export function ShareCard({
             ) : (
               <Download className="h-4 w-4" />
             )}
-            Baixar imagem
+            {t("share.downloadImage")}
           </Button>
           <Button
             variant="outline-muted"
@@ -141,11 +143,11 @@ export function ShareCard({
             ) : (
               <Share2 className="h-4 w-4" />
             )}
-            Compartilhar
+            {t("share.share")}
           </Button>
         </div>
         <p className="text-center text-[11px] text-muted-foreground">
-          {analyticsKind === "post" ? "" : "CryptoPulse.com — conteúdo informativo, não é recomendação financeira."}
+          {analyticsKind === "post" ? "" : t("brand.shareFooter")}
         </p>
       </DialogContent>
     </Dialog>

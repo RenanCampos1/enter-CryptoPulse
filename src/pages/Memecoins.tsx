@@ -1,29 +1,30 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Flame } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useSeo } from "@/lib/seo";
 import { useMarkets, useTrending } from "@/lib/hooks";
-import { formatPrice, formatCompact, formatPercent } from "@/lib/format";
+import { formatPrice, formatCompact, formatPercent, formatClock } from "@/lib/format";
 import { trackCoinClick } from "@/lib/analytics";
 import { PageHeader } from "@/components/market/PageHeader";
 import { ErrorState } from "@/components/market/ErrorState";
 import { Sparkline } from "@/components/market/Sparkline";
 import { cn } from "@/lib/utils";
 
-const SORTS = [
-  { key: "cap", label: "Top Market Cap" },
-  { key: "gainers", label: "Maiores altas" },
-  { key: "volume", label: "Maior volume" },
-  { key: "trending", label: "Trending" },
-];
-
 export default function Memecoins() {
+  const { t } = useTranslation();
   useSeo({
-    title: "Memecoin Radar — DOGE, SHIB, PEPE e mais | CryptoPulse",
-    description:
-      "As principais memecoins do mercado: DOGE, SHIB, PEPE, BONK, FLOKI e WIF com preço, variação, volume e market cap em tempo real.",
+    title: t("seo.memecoinsTitle"),
+    description: t("seo.memecoinsDesc"),
     path: "/memecoins",
   });
+
+  const sorts = [
+    { key: "cap", label: t("memecoins.sortCap") },
+    { key: "gainers", label: t("memecoins.sortGainers") },
+    { key: "volume", label: t("memecoins.sortVolume") },
+    { key: "trending", label: t("memecoins.sortTrending") },
+  ];
 
   const [sort, setSort] = useState("cap");
   const navigate = useNavigate();
@@ -50,12 +51,12 @@ export default function Memecoins() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Memecoin Radar"
-        subtitle="As memecoins mais relevantes do mercado, com preço, variação, volume e ranking."
+        title={t("memecoins.pageTitle")}
+        subtitle={t("memecoins.subtitle")}
       />
 
       <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-        {SORTS.map((s) => (
+        {sorts.map((s) => (
           <button
             key={s.key}
             onClick={() => setSort(s.key)}
@@ -72,20 +73,20 @@ export default function Memecoins() {
       </div>
 
       {isError ? (
-        <ErrorState lastUpdated={dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString("pt-BR") : undefined} />
+        <ErrorState lastUpdated={dataUpdatedAt ? formatClock(dataUpdatedAt / 1000) : undefined} />
       ) : (
         <div className="card-glow overflow-x-auto rounded-2xl border border-border/60 bg-card">
           <table className="w-full min-w-[560px] text-sm">
             <thead>
               <tr className="border-b border-border/60 text-left text-xs uppercase tracking-wider text-muted-foreground">
                 <th className="px-4 py-3 font-medium">#</th>
-                <th className="px-4 py-3 font-medium">Moeda</th>
-                <th className="px-4 py-3 text-right font-medium">Preço</th>
+                <th className="px-4 py-3 font-medium">{t("table.coin")}</th>
+                <th className="px-4 py-3 text-right font-medium">{t("table.price")}</th>
                 <th className="px-4 py-3 text-right font-medium">24h</th>
-                <th className="hidden px-4 py-3 text-right font-medium md:table-cell">Volume 24h</th>
-                <th className="hidden px-4 py-3 text-right font-medium lg:table-cell">Market Cap</th>
+                <th className="hidden px-4 py-3 text-right font-medium md:table-cell">{t("table.volume24h")}</th>
+                <th className="hidden px-4 py-3 text-right font-medium lg:table-cell">{t("table.marketCap")}</th>
                 <th className="hidden px-4 py-3 text-right font-medium xl:table-cell">7d</th>
-                <th className="hidden px-4 py-3 text-right font-medium xl:table-cell">Ranking</th>
+                <th className="hidden px-4 py-3 text-right font-medium xl:table-cell">#</th>
               </tr>
             </thead>
             <tbody>
@@ -109,7 +110,7 @@ export default function Memecoins() {
                             {coin.name}
                             {trend ? (
                               <span className="flex items-center gap-0.5 rounded-md bg-warning/15 px-1 py-0.5 text-[10px] font-semibold text-warning">
-                                <Flame className="h-2.5 w-2.5" /> Trending
+                                <Flame className="h-2.5 w-2.5" /> {t("memecoins.trendingBadge")}
                               </span>
                             ) : null}
                           </div>

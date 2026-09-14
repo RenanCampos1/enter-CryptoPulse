@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { TrendingUp, TrendingDown, ArrowUpRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { formatPrice, formatCompact, formatPercent, changeColorClass } from "@/lib/format";
 import { trackCoinClick } from "@/lib/analytics";
 import { PriceChart } from "./PriceChart";
@@ -16,6 +17,7 @@ function Metric({ label, value, valueClass }: { label: string; value: string; va
 }
 
 export function BitcoinCard({ coin }: { coin?: MarketCoin }) {
+  const { t } = useTranslation();
   const btc = coin;
   const loading = !btc;
 
@@ -44,7 +46,7 @@ export function BitcoinCard({ coin }: { coin?: MarketCoin }) {
                     onClick={() => trackCoinClick("bitcoin", "btc", "hero")}
                     className="flex items-center gap-1 text-primary hover:underline"
                   >
-                    Ver detalhes <ArrowUpRight className="h-3 w-3" />
+                    {t("bitcoin.details")} <ArrowUpRight className="h-3 w-3" />
                   </Link>
                   <span className="text-muted-foreground">
                     #{btc?.market_cap_rank ?? "—"}
@@ -60,7 +62,7 @@ export function BitcoinCard({ coin }: { coin?: MarketCoin }) {
 
           <div className="mt-5 flex flex-wrap items-end gap-x-8 gap-y-3">
             <div>
-              <div className="text-xs text-muted-foreground">Preço atual</div>
+              <div className="text-xs text-muted-foreground">{t("bitcoin.currentPrice")}</div>
               <div className="font-mono-nums text-3xl font-bold text-foreground sm:text-4xl">
                 {loading ? "—" : formatPrice(btc?.current_price)}
               </div>

@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { TrendingUp, TrendingDown, ArrowUpRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { formatPrice, formatCompact, formatPercent, changeColorClass } from "@/lib/format";
 import { trackCoinClick } from "@/lib/analytics";
 import { Sparkline } from "./Sparkline";
@@ -16,6 +17,7 @@ interface RankingTableProps {
 }
 
 export function RankingTable({ title, direction, coins, limit, showAllTo, shareLabel }: RankingTableProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const sorted = [...coins].sort((a, b) =>
     direction === "up"
@@ -45,7 +47,7 @@ export function RankingTable({ title, direction, coins, limit, showAllTo, shareL
               to={showAllTo}
               className="flex items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
             >
-              Ver todas <ArrowUpRight className="h-3 w-3" />
+              {t("ranking.seeAll")} <ArrowUpRight className="h-3 w-3" />
             </Link>
           ) : null}
         </div>
@@ -56,11 +58,11 @@ export function RankingTable({ title, direction, coins, limit, showAllTo, shareL
           <thead>
             <tr className="border-b border-border/60 text-left text-xs uppercase tracking-wider text-muted-foreground">
               <th className="px-2 py-3 font-medium">#</th>
-              <th className="px-1.5 py-3 font-medium">Moeda</th>
-              <th className="px-1.5 py-3 text-right font-medium">Preço</th>
+              <th className="px-1.5 py-3 font-medium">{t("ranking.coin")}</th>
+              <th className="px-1.5 py-3 text-right font-medium">{t("ranking.price")}</th>
               <th className="px-1.5 py-3 text-right font-medium">24h</th>
-              <th className="hidden px-4 py-3 text-right font-medium md:table-cell">Volume 24h</th>
-              <th className="hidden px-4 py-3 text-right font-medium lg:table-cell">Market Cap</th>
+              <th className="hidden px-4 py-3 text-right font-medium md:table-cell">{t("ranking.volume24h")}</th>
+              <th className="hidden px-4 py-3 text-right font-medium lg:table-cell">{t("ranking.marketCap")}</th>
               <th className="hidden px-4 py-3 text-right font-medium xl:table-cell">7d</th>
             </tr>
           </thead>

@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useCoinSearch } from "@/lib/hooks";
 import { useDebounce } from "@/lib/use-debounce";
 import { trackCoinSearch } from "@/lib/analytics";
 
 export function CoinSearch({ className, autoFocus = false }: { className?: string; autoFocus?: boolean }) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const debounced = useDebounce(query, 350);
@@ -48,7 +50,7 @@ export function CoinSearch({ className, autoFocus = false }: { className?: strin
             }
             if (e.key === "Escape") setOpen(false);
           }}
-          placeholder="Buscar criptomoeda..."
+          placeholder={t("search.placeholder")}
           className="h-9 w-full rounded-lg border border-border bg-card-secondary pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
         />
         {isFetching && (
@@ -59,7 +61,7 @@ export function CoinSearch({ className, autoFocus = false }: { className?: strin
       {open && query.trim().length >= 2 && (
         <div className="absolute left-0 right-0 top-11 z-50 max-h-80 overflow-auto rounded-xl border border-border bg-popover p-1.5 shadow-card">
           {results.length === 0 && !isFetching ? (
-            <div className="px-3 py-6 text-center text-sm text-muted-foreground">Nenhuma moeda encontrada.</div>
+            <div className="px-3 py-6 text-center text-sm text-muted-foreground">{t("search.noResults")}</div>
           ) : (
             results.map((coin) => (
               <button

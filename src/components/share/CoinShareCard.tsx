@@ -1,14 +1,16 @@
 import { useMemo } from "react";
 import { Share2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { useCoinMarkets, useMarketChart } from "@/lib/hooks";
-import { formatCompact, formatPrice, formatPercent, changeColorClass } from "@/lib/format";
+import { formatCompact, formatPrice, formatPercent, changeColorClass, activeLocale } from "@/lib/format";
 import { trackCardDownload } from "@/lib/analytics";
 import { Logo } from "@/components/layout/Logo";
 import { ShareCard, type ShareFormat } from "./ShareCard";
 import { Sparkline } from "@/components/market/Sparkline";
 
 export function CoinShareCardContent({ coinId, format }: { coinId: string; format: ShareFormat }) {
+  const { t } = useTranslation();
   const { data: coins } = useCoinMarkets([coinId]);
   const { data: chart } = useMarketChart(coinId, "1D");
   const coin = coins?.[0];
@@ -24,7 +26,7 @@ export function CoinShareCardContent({ coinId, format }: { coinId: string; forma
         <div className="flex items-center gap-2">
           <Logo compact />
           <span className="text-[11px] text-muted-foreground">
-            {new Date().toLocaleString("pt-BR", {
+            {new Date().toLocaleString(activeLocale(), {
               day: "2-digit",
               month: "2-digit",
               hour: "2-digit",
@@ -39,11 +41,11 @@ export function CoinShareCardContent({ coinId, format }: { coinId: string; forma
 
       <div className="relative mt-3">
         <div className="text-xs text-muted-foreground">
-          {coin ? `${coin.name} agora` : "Mercado agora"}
+          {coin ? t("share.coinNow", { name: coin.name }) : t("share.marketNow")}
         </div>
         <div className="font-mono-nums text-3xl font-bold">{formatPrice(coin?.current_price)}</div>
         <div className={`mt-0.5 text-sm ${changeColorClass(coin?.price_change_percentage_24h)}`}>
-          {formatPercent(coin?.price_change_percentage_24h)} nas últimas 24h
+          {formatPercent(coin?.price_change_percentage_24h)} {t("share.last24h")}
         </div>
       </div>
 
@@ -68,27 +70,28 @@ export function CoinShareCardContent({ coinId, format }: { coinId: string; forma
         } pt-3 text-muted-foreground`}
       >
         <span className={`font-semibold ${up ? "text-success" : "text-danger"}`}>
-          {up ? "▲ alta" : "▼ baixa"}
+          {up ? t("share.up") : t("share.down")}
         </span>
-        <span className="font-display font-semibold text-primary">CryptoPulse.com</span>
+        <span className="font-display font-semibold text-primary">{t("share.brand")}</span>
       </div>
     </div>
   );
 }
 
 export function CoinShareButton({ coinId, coinName }: { coinId: string; coinName: string }) {
+  const { t } = useTranslation();
   return (
     <ShareCard
       trigger={
         <Button variant="outline-muted" data-analytics-share="coin">
           <Share2 className="h-4 w-4" />
-          Compartilhar
+          {t("share.share")}
         </Button>
       }
-      dialogTitle={`Compartilhar ${coinName}`}
-      dialogDescription="Baixe o card e publique onde quiser."
+      dialogTitle={t("share.coinDialogTitle", { name: coinName })}
+      dialogDescription={t("share.coinDialogDesc")}
       fileName={`cryptopulse-${coinId}`}
-      shareText={`${coinName} agora: preço, variação, market cap e volume — via CryptoPulse`}
+      shareText={t("share.coinShareText", { name: coinName })}
       analyticsKind="coin"
       onDownloaded={() => trackCardDownload("coin", "1:1")}
       onShared={() => trackCardDownload("coin", "1:1")}

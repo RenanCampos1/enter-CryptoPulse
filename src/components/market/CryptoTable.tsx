@@ -1,27 +1,13 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Star } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useMarkets } from "@/lib/hooks";
-import { formatPrice, formatCompact, formatPercent, formatNumber, changeColorClass } from "@/lib/format";
+import { formatPrice, formatCompact, formatPercent, formatNumber, changeColorClass, formatClock } from "@/lib/format";
 import { trackCoinClick } from "@/lib/analytics";
 import { Sparkline } from "./Sparkline";
 import { ErrorState } from "./ErrorState";
 import { cn } from "@/lib/utils";
-
-const FILTERS = [
-  { label: "Todas", key: "all" },
-  { label: "Top 10", key: "top10" },
-  { label: "Top 50", key: "top50" },
-  { label: "Top 100", key: "top100" },
-  { label: "Favoritas", key: "favorites" },
-  { label: "DeFi", key: "decentralized-finance-defi" },
-  { label: "Memecoins", key: "meme-token" },
-  { label: "AI", key: "artificial-intelligence" },
-  { label: "Gaming", key: "gaming" },
-  { label: "Layer 1", key: "layer-1" },
-  { label: "Layer 2", key: "layer-2" },
-  { label: "RWA", key: "real-world-assets-rwa" },
-];
 
 const FAV_KEY = "cryptopulse-favorites";
 
@@ -52,9 +38,25 @@ function useFavorites() {
 }
 
 export function CryptoTable() {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState("all");
   const navigate = useNavigate();
   const { favorites, toggle } = useFavorites();
+
+  const FILTERS = [
+    { label: t("table.filters.all"), key: "all" },
+    { label: t("table.filters.top10"), key: "top10" },
+    { label: t("table.filters.top50"), key: "top50" },
+    { label: t("table.filters.top100"), key: "top100" },
+    { label: t("table.filters.favorites"), key: "favorites" },
+    { label: t("table.filters.defi"), key: "decentralized-finance-defi" },
+    { label: t("table.filters.memecoins"), key: "meme-token" },
+    { label: t("table.filters.ai"), key: "artificial-intelligence" },
+    { label: t("table.filters.gaming"), key: "gaming" },
+    { label: t("table.filters.layer1"), key: "layer-1" },
+    { label: t("table.filters.layer2"), key: "layer-2" },
+    { label: t("table.filters.rwa"), key: "real-world-assets-rwa" },
+  ];
 
   const isCategory = !["all", "top10", "top50", "top100", "favorites"].includes(filter);
   const { data, isLoading, isError, dataUpdatedAt } = useMarkets(isCategory ? 60 : 100, isCategory ? filter : undefined);
@@ -96,7 +98,7 @@ export function CryptoTable() {
 
       {isError ? (
         <div className="p-4">
-          <ErrorState lastUpdated={dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString("pt-BR") : undefined} />
+          <ErrorState lastUpdated={dataUpdatedAt ? formatClock(dataUpdatedAt / 1000) : undefined} />
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -105,14 +107,14 @@ export function CryptoTable() {
               <tr className="border-b border-border/60 text-left text-xs uppercase tracking-wider text-muted-foreground">
                 <th className="w-10 px-4 py-3"></th>
                 <th className="px-2 py-3 font-medium">#</th>
-                <th className="px-2 py-3 font-medium">Moeda</th>
-                <th className="px-2 py-3 text-right font-medium">Preço</th>
+                <th className="px-2 py-3 font-medium">{t("table.coin")}</th>
+                <th className="px-2 py-3 text-right font-medium">{t("table.price")}</th>
                 <th className="px-2 py-3 text-right font-medium">1h</th>
                 <th className="px-2 py-3 text-right font-medium">24h</th>
                 <th className="px-2 py-3 text-right font-medium">7d</th>
-                <th className="hidden px-2 py-3 text-right font-medium md:table-cell">Market Cap</th>
-                <th className="hidden px-2 py-3 text-right font-medium lg:table-cell">Volume 24h</th>
-                <th className="hidden px-2 py-3 text-right font-medium xl:table-cell">Circulating Supply</th>
+                <th className="hidden px-2 py-3 text-right font-medium md:table-cell">{t("table.marketCap")}</th>
+                <th className="hidden px-2 py-3 text-right font-medium lg:table-cell">{t("table.volume24h")}</th>
+                <th className="hidden px-2 py-3 text-right font-medium xl:table-cell">{t("table.circulatingSupply")}</th>
                 <th className="hidden px-2 py-3 text-right font-medium lg:table-cell">7d</th>
               </tr>
             </thead>
@@ -141,7 +143,7 @@ export function CryptoTable() {
                             "transition-colors",
                             favorites.includes(coin.id) ? "text-warning" : "text-muted-foreground/40 hover:text-muted-foreground"
                           )}
-                          aria-label={favorites.includes(coin.id) ? "Remover favorita" : "Adicionar favorita"}
+                          aria-label={favorites.includes(coin.id) ? t("table.removeFavorite") : t("table.addFavorite")}
                         >
                           <Star className={cn("h-4 w-4", favorites.includes(coin.id) && "fill-current")} />
                         </button>

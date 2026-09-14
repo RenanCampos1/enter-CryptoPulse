@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight, TrendingUp, TrendingDown } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useSeo } from "@/lib/seo";
 import { useMarkets, useNews, useFearGreedLatest } from "@/lib/hooks";
+import { formatClock } from "@/lib/format";
 import { OverviewCards } from "@/components/market/OverviewCards";
 import { BitcoinCard } from "@/components/market/BitcoinCard";
 import { RankingTable } from "@/components/market/RankingTable";
@@ -15,10 +17,10 @@ import { MarketShareButton } from "@/components/share/MarketShareCard";
 import { ErrorState } from "@/components/market/ErrorState";
 
 export default function Home() {
+  const { t } = useTranslation();
   useSeo({
-    title: "CryptoPulse — O mercado cripto em um só lugar",
-    description:
-      "Preços de criptomoedas em tempo real, Bitcoin, Ethereum, market cap, dominância, Fear & Greed, notícias, rankings e tendências do mercado.",
+    title: t("seo.homeTitle"),
+    description: t("seo.homeDesc"),
   });
 
   const { data: coins, isError: coinsError, dataUpdatedAt } = useMarkets(100);
@@ -27,6 +29,14 @@ export default function Home() {
   const { current, previous } = useFearGreedLatest();
   const fg = current ? Number(current.value) : undefined;
   const fgPrev = previous ? Number(previous.value) : undefined;
+
+  const fngZones = [
+    { range: t("home.fngZoneRange1"), label: t("home.fngZoneLabel1"), desc: t("home.fngZoneDesc1"), cls: "text-danger" },
+    { range: t("home.fngZoneRange2"), label: t("home.fngZoneLabel2"), desc: t("home.fngZoneDesc2"), cls: "text-warning" },
+    { range: t("home.fngZoneRange3"), label: t("home.fngZoneLabel3"), desc: t("home.fngZoneDesc3"), cls: "text-muted-foreground" },
+    { range: t("home.fngZoneRange4"), label: t("home.fngZoneLabel4"), desc: t("home.fngZoneDesc4"), cls: "text-success" },
+    { range: t("home.fngZoneRange5"), label: t("home.fngZoneLabel5"), desc: t("home.fngZoneDesc5"), cls: "text-success" },
+  ];
 
   return (
     <div className="space-y-8 md:space-y-10">
@@ -42,14 +52,16 @@ export default function Home() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-60" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
               </span>
-              Dados ao vivo — mercado cripto
+              {t("home.hero.badge")}
             </div>
             <h1 className="font-display text-3xl font-bold leading-tight tracking-tight text-foreground md:text-5xl">
-              O mercado cripto{" "}
-              <span className="gradient-primary bg-clip-text text-transparent text-glow-primary">em um só lugar.</span>
+              {t("home.hero.titleBefore")}{" "}
+              <span className="gradient-primary bg-clip-text text-transparent text-glow-primary">
+                {t("home.hero.titleGradient")}
+              </span>
             </h1>
             <p className="mt-3 max-w-xl text-sm text-muted-foreground md:text-base">
-              Preços, notícias, tendências e indicadores do mercado de criptomoedas em tempo real.
+              {t("home.hero.subtitle")}
             </p>
           </div>
 
@@ -59,7 +71,7 @@ export default function Home() {
               to="/market"
               className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary/50"
             >
-              Ver mercado <ArrowUpRight className="h-4 w-4" />
+              {t("home.viewMarket")} <ArrowUpRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
@@ -80,28 +92,25 @@ export default function Home() {
       {/* GAINERS / LOSERS */}
       <div className="grid gap-6 xl:grid-cols-2">
         <RankingTable
-          title="Maiores altas"
+          title={t("home.gainersTitle")}
           direction="up"
           coins={coins ?? []}
           limit={6}
           showAllTo="/gainers"
-          shareLabel="Compartilhar ranking"
+          shareLabel={t("home.shareRanking")}
         />
         <RankingTable
-          title="Maiores quedas"
+          title={t("home.losersTitle")}
           direction="down"
           coins={coins ?? []}
           limit={6}
           showAllTo="/losers"
-          shareLabel="Compartilhar ranking"
+          shareLabel={t("home.shareRanking")}
         />
       </div>
 
       {coinsError ? (
-        <ErrorState
-          message="Dados temporariamente indisponíveis."
-          lastUpdated={dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString("pt-BR") : undefined}
-        />
+        <ErrorState lastUpdated={dataUpdatedAt ? formatClock(dataUpdatedAt / 1000) : undefined} />
       ) : null}
 
       {/* TRENDING */}
@@ -114,16 +123,16 @@ export default function Home() {
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-card-secondary text-foreground">
               <TrendingUp className="h-4 w-4" />
             </span>
-            <h2 className="font-display text-lg font-bold text-foreground">Crypto Fear & Greed</h2>
-            <span className="text-xs text-muted-foreground">sentimento do mercado</span>
+            <h2 className="font-display text-lg font-bold text-foreground">{t("home.fearGreedTitle")}</h2>
+            <span className="text-xs text-muted-foreground">{t("home.fearGreedSub")}</span>
           </div>
           <div className="flex items-center gap-2">
             {fg !== undefined && fgPrev !== undefined ? (
               <span className={`text-xs font-medium ${fg >= fgPrev ? "text-success" : "text-danger"}`}>
-                {fg >= fgPrev ? "▲" : "▼"} {Math.abs(fg - fgPrev)} vs ontem
+                {fg >= fgPrev ? "▲" : "▼"} {t("home.vsYesterday", { delta: Math.abs(fg - fgPrev) })}
               </span>
             ) : null}
-            <MarketShareButton label="Compartilhar Fear & Greed" />
+            <MarketShareButton label={t("home.shareFearGreed")} />
           </div>
         </div>
 
@@ -133,33 +142,21 @@ export default function Home() {
           </div>
           <div className="flex flex-col justify-center gap-3 text-sm text-muted-foreground">
             <p>
-              O <strong className="text-foreground">Fear & Greed Index</strong> mede o sentimento
-              predominante do mercado de criptomoedas em uma escala de 0 (extreme fear) a 100
-              (extreme greed).
+              {t("home.fngIntroBefore")}{" "}
+              <strong className="text-foreground">{t("home.fngIndexName")}</strong>{" "}
+              {t("home.fngIntroAfter")}
             </p>
             <ul className="list-inside space-y-1.5 text-xs">
-              <li>
-                <strong className="text-danger">0–24 — Extreme Fear</strong>: medo extremo, possível
-                oportunidade.
-              </li>
-              <li>
-                <strong className="text-warning">25–44 — Fear</strong>: cautela predominante.
-              </li>
-              <li>
-                <strong className="text-muted-foreground">45–54 — Neutral</strong>: equilíbrio.
-              </li>
-              <li>
-                <strong className="text-success">55–75 — Greed</strong>: otimismo predominante.
-              </li>
-              <li>
-                <strong className="text-success">76–100 — Extreme Greed</strong>: euforia, risco de
-                correção.
-              </li>
+              {fngZones.map((zone) => (
+                <li key={zone.range}>
+                  <strong className={zone.cls}>
+                    {zone.range} — {zone.label}
+                  </strong>
+                  : {zone.desc}
+                </li>
+              ))}
             </ul>
-            <p className="text-xs">
-              O índice considera volatilidade, momentum, volume e pesquisas. É um indicador
-              informativo, não uma recomendação de investimento.
-            </p>
+            <p className="text-xs">{t("home.fngOutro")}</p>
           </div>
         </div>
       </section>
@@ -180,17 +177,17 @@ export default function Home() {
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-card-secondary text-foreground">
               <TrendingDown className="h-4 w-4 rotate-180" />
             </span>
-            <h2 className="font-display text-lg font-bold text-foreground">Últimas notícias</h2>
+            <h2 className="font-display text-lg font-bold text-foreground">{t("home.latestNews")}</h2>
           </div>
           <Link
             to="/news"
             className="flex items-center gap-1 text-sm font-medium text-primary hover:underline"
           >
-            Todas as notícias <ArrowUpRight className="h-4 w-4" />
+            {t("home.allNews")} <ArrowUpRight className="h-4 w-4" />
           </Link>
         </div>
         {newsError ? (
-          <ErrorState message="Notícias temporariamente indisponíveis." />
+          <ErrorState message={t("home.newsError")} />
         ) : (
           <NewsList articles={articles ?? []} limit={6} />
         )}

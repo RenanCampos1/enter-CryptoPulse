@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { Bell, TrendingUp, TrendingDown, Wallet, ShieldAlert } from "lucide-react";
+import { Bell, TrendingUp, TrendingDown, ShieldAlert } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useGlobalData, useMarkets, useFearGreedLatest } from "@/lib/hooks";
 import { formatPercent } from "@/lib/format";
 
@@ -13,6 +14,7 @@ interface Alert {
 }
 
 export function MarketAlerts() {
+  const { t } = useTranslation();
   const { data: global } = useGlobalData();
   const { data: coins } = useMarkets(100);
   const { current, previous } = useFearGreedLatest();
@@ -25,33 +27,33 @@ export function MarketAlerts() {
     const eth24 = eth?.price_change_percentage_24h ?? 0;
     const mcapChange = global?.market_cap_change_percentage_24h_usd ?? 0;
 
-    if (btc24 > 5) out.push({ id: "btc-up", tone: "up", text: `BTC subiu mais de ${formatPercent(btc24)} nas últimas 24h`, icon: "up" });
-    if (btc24 < -5) out.push({ id: "btc-down", tone: "down", text: `BTC caiu mais de ${formatPercent(btc24)} nas últimas 24h`, icon: "down" });
-    if (eth24 > 5) out.push({ id: "eth-up", tone: "up", text: `ETH valorizou ${formatPercent(eth24)} nas últimas 24h`, icon: "up" });
+    if (btc24 > 5) out.push({ id: "btc-up", tone: "up", text: t("alerts.btcUp", { pct: formatPercent(btc24) }), icon: "up" });
+    if (btc24 < -5) out.push({ id: "btc-down", tone: "down", text: t("alerts.btcDown", { pct: formatPercent(btc24) }), icon: "down" });
+    if (eth24 > 5) out.push({ id: "eth-up", tone: "up", text: t("alerts.ethUp", { pct: formatPercent(eth24) }), icon: "up" });
 
-    if (mcapChange > 3) out.push({ id: "mcap-up", tone: "up", text: `Market cap do mercado subiu ${formatPercent(mcapChange)} em 24h`, icon: "up" });
-    if (mcapChange < -3) out.push({ id: "mcap-down", tone: "down", text: `Market cap do mercado caiu ${formatPercent(mcapChange)} em 24h`, icon: "down" });
+    if (mcapChange > 3) out.push({ id: "mcap-up", tone: "up", text: t("alerts.mcapUp", { pct: formatPercent(mcapChange) }), icon: "up" });
+    if (mcapChange < -3) out.push({ id: "mcap-down", tone: "down", text: t("alerts.mcapDown", { pct: formatPercent(mcapChange) }), icon: "down" });
 
     const memes = (coins ?? []).filter((c) => MEME_IDS.has(c.id));
     if (memes.length) {
       const avg = memes.reduce((acc, c) => acc + (c.price_change_percentage_24h ?? 0), 0) / memes.length;
-      if (avg > 5) out.push({ id: "meme-up", tone: "up", text: `Memecoins estão apresentando forte valorização (média ${formatPercent(avg)})`, icon: "up" });
-      if (avg < -5) out.push({ id: "meme-down", tone: "down", text: `Memecoins em forte queda (média ${formatPercent(avg)})`, icon: "down" });
+      if (avg > 5) out.push({ id: "meme-up", tone: "up", text: t("alerts.memeUp", { pct: formatPercent(avg) }), icon: "up" });
+      if (avg < -5) out.push({ id: "meme-down", tone: "down", text: t("alerts.memeDown", { pct: formatPercent(avg) }), icon: "down" });
     }
 
     const fgNow = current ? Number(current.value) : undefined;
     const fgPrev = previous ? Number(previous.value) : undefined;
     if (fgNow !== undefined && fgPrev !== undefined) {
       const delta = fgNow - fgPrev;
-      if (delta >= 5) out.push({ id: "fg-up", tone: "up", text: `Sentimento do mercado melhorou ${delta} pontos (Fear & Greed: ${fgNow}/100)`, icon: "sentiment" });
-      if (delta <= -5) out.push({ id: "fg-down", tone: "down", text: `Sentimento do mercado piorou ${Math.abs(delta)} pontos (Fear & Greed: ${fgNow}/100)`, icon: "sentiment" });
+      if (delta >= 5) out.push({ id: "fg-up", tone: "up", text: t("alerts.fgImproved", { delta, fg: fgNow }), icon: "sentiment" });
+      if (delta <= -5) out.push({ id: "fg-down", tone: "down", text: t("alerts.fgWorsened", { delta: Math.abs(delta), fg: fgNow }), icon: "sentiment" });
     }
 
     if (out.length === 0) {
-      out.push({ id: "calm", tone: "info", text: "Sem movimentos extremos agora — mercado em faixa normal.", icon: "sentiment" });
+      out.push({ id: "calm", tone: "info", text: t("alerts.calm"), icon: "sentiment" });
     }
     return out.slice(0, 4);
-  }, [coins, global, current, previous]);
+  }, [coins, global, current, previous, t]);
 
   return (
     <section className="card-glow rounded-2xl border border-border/60 bg-card p-5">
@@ -59,8 +61,8 @@ export function MarketAlerts() {
         <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-card-secondary text-foreground">
           <Bell className="h-4 w-4" />
         </span>
-        <h2 className="font-display text-lg font-bold text-foreground">Market Alerts</h2>
-        <span className="text-xs text-muted-foreground">movimentos detectados em dados reais</span>
+        <h2 className="font-display text-lg font-bold text-foreground">{t("alerts.title")}</h2>
+        <span className="text-xs text-muted-foreground">{t("alerts.subtitle")}</span>
       </div>
 
       <ul className="space-y-2">

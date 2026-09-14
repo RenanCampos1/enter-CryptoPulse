@@ -1,14 +1,16 @@
+import { useTranslation } from "react-i18next";
 import { useSeo } from "@/lib/seo";
 import { useTrending } from "@/lib/hooks";
 import { PageHeader } from "@/components/market/PageHeader";
 import { ErrorState } from "@/components/market/ErrorState";
 import { TrendingSection } from "@/components/market/TrendingSection";
+import { formatClock } from "@/lib/format";
 
 export default function Trending() {
+  const { t } = useTranslation();
   useSeo({
-    title: "Trending Crypto — Criptomoedas em Alta de Atenção | CryptoPulse",
-    description:
-      "As criptomoedas que estão recebendo mais atenção e volume agora, com preço, variação e ranking.",
+    title: t("seo.trendingTitle"),
+    description: t("seo.trendingDesc"),
     path: "/trending",
   });
 
@@ -17,11 +19,11 @@ export default function Trending() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Trending Crypto"
-        subtitle="As moedas que estão recebendo maior atenção e volume no mercado agora."
+        title={t("trendingPage.title")}
+        subtitle={t("trendingPage.subtitle")}
       />
       {isError ? (
-        <ErrorState lastUpdated={dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString("pt-BR") : undefined} />
+        <ErrorState lastUpdated={dataUpdatedAt ? formatClock(dataUpdatedAt / 1000) : undefined} />
       ) : (
         <TrendingSection />
       )}

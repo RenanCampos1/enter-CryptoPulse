@@ -1,15 +1,17 @@
+import { useTranslation } from "react-i18next";
 import { useSeo } from "@/lib/seo";
 import { useMarkets } from "@/lib/hooks";
 import { RankingTable } from "@/components/market/RankingTable";
 import { PageHeader } from "@/components/market/PageHeader";
 import { ErrorState } from "@/components/market/ErrorState";
 import { MarketShareButton } from "@/components/share/MarketShareCard";
+import { formatClock } from "@/lib/format";
 
 export default function Losers() {
+  const { t } = useTranslation();
   useSeo({
-    title: "Maiores Quedas Hoje — Criptomoedas em Queda 24h | CryptoPulse",
-    description:
-      "As criptomoedas que mais caíram nas últimas 24 horas: ranking com preço, variação, volume e market cap.",
+    title: t("seo.losersTitle"),
+    description: t("seo.losersDesc"),
     path: "/losers",
   });
 
@@ -18,14 +20,14 @@ export default function Losers() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Maiores quedas"
-        subtitle="As criptomoedas que mais caíram nas últimas 24 horas."
-        actions={<MarketShareButton label="Compartilhar ranking" />}
+        title={t("losers.title")}
+        subtitle={t("losers.subtitle")}
+        actions={<MarketShareButton label={t("losers.share")} />}
       />
       {isError ? (
-        <ErrorState lastUpdated={dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString("pt-BR") : undefined} />
+        <ErrorState lastUpdated={dataUpdatedAt ? formatClock(dataUpdatedAt / 1000) : undefined} />
       ) : (
-        <RankingTable title="Top 24h" direction="down" coins={coins ?? []} />
+        <RankingTable title={t("losers.top24h")} direction="down" coins={coins ?? []} />
       )}
     </div>
   );

@@ -1,7 +1,8 @@
 import { useState, useMemo } from "react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from "recharts";
+import { useTranslation } from "react-i18next";
 import { useMarketChart } from "@/lib/hooks";
-import { formatPrice, formatCompactRaw, formatClock } from "@/lib/format";
+import { formatPrice, formatCompactRaw, formatClock, activeLocale } from "@/lib/format";
 import { ErrorState } from "./ErrorState";
 import { cn } from "@/lib/utils";
 import type { ChartPeriod } from "@/lib/api/types";
@@ -11,12 +12,12 @@ const PERIODS: ChartPeriod[] = ["1H", "1D", "7D", "1M", "1Y", "ALL"];
 function tickFormatter(ts: number, period: ChartPeriod): string {
   const d = new Date(ts * 1000);
   if (period === "1H" || period === "1D") {
-    return d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    return d.toLocaleTimeString(activeLocale(), { hour: "2-digit", minute: "2-digit" });
   }
   if (period === "7D" || period === "1M") {
-    return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+    return d.toLocaleDateString(activeLocale(), { day: "2-digit", month: "2-digit" });
   }
-  return d.toLocaleDateString("pt-BR", { month: "2-digit", year: "2-digit" });
+  return d.toLocaleDateString(activeLocale(), { month: "2-digit", year: "2-digit" });
 }
 
 function ChartTooltipBody({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: number }) {
@@ -24,7 +25,7 @@ function ChartTooltipBody({ active, payload, label }: { active?: boolean; payloa
   return (
     <div className="rounded-lg border border-border/60 bg-popover px-3 py-2 text-xs shadow-card">
       <div className="text-muted-foreground">
-        {label ? new Date(label * 1000).toLocaleString("pt-BR") : ""}
+        {label ? new Date(label * 1000).toLocaleString(activeLocale()) : ""}
       </div>
       <div className="font-mono-nums mt-0.5 text-sm font-semibold text-foreground">
         {formatPrice(payload[0].value)}
@@ -34,6 +35,7 @@ function ChartTooltipBody({ active, payload, label }: { active?: boolean; payloa
 }
 
 export function PriceChart({ coinId, height = 300, className }: { coinId: string; height?: number; className?: string }) {
+  const { t } = useTranslation();
   const [period, setPeriod] = useState<ChartPeriod>("1D");
   const { data, isLoading, error, dataUpdatedAt } = useMarketChart(coinId, period);
 
@@ -68,8 +70,8 @@ export function PriceChart({ coinId, height = 300, className }: { coinId: string
         </div>
         <span className="text-xs text-muted-foreground">
           {dataUpdatedAt
-            ? `Atualizado ${formatClock(dataUpdatedAt / 1000)}`
-            : "Carregando..."}
+            ? t("chart.updated", { time: formatClock(dataUpdatedAt / 1000) })
+            : t("chart.loading")}
         </span>
       </div>
 

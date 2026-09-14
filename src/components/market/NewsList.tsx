@@ -1,14 +1,16 @@
 import { ArrowUpRight, ArrowDownRight, Minus, ExternalLink, Sparkles } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useNewsSummaries } from "@/lib/hooks";
 import { timeAgo } from "@/lib/format";
 import { trackNewsClick } from "@/lib/analytics";
 import type { NewsArticle, NewsSummary } from "@/lib/api/types";
 
 function ImpactBadge({ impact }: { impact: NewsSummary["impact"] }) {
+  const { t } = useTranslation();
   const config = {
-    positivo: { icon: ArrowUpRight, cls: "bg-success/15 text-success", label: "Positivo" },
-    neutro: { icon: Minus, cls: "bg-muted text-muted-foreground", label: "Neutro" },
-    negativo: { icon: ArrowDownRight, cls: "bg-danger/15 text-danger", label: "Negativo" },
+    positivo: { icon: ArrowUpRight, cls: "bg-success/15 text-success", label: t("news.impactPositive") },
+    neutro: { icon: Minus, cls: "bg-muted text-muted-foreground", label: t("news.impactNeutral") },
+    negativo: { icon: ArrowDownRight, cls: "bg-danger/15 text-danger", label: t("news.impactNegative") },
   }[impact];
   const Icon = config.icon;
   return (
@@ -30,6 +32,7 @@ export function NewsList({
   limit?: number;
   className?: string;
 }) {
+  const { t } = useTranslation();
   const { data: summaries } = useNewsSummaries(showSummaries ? articles : []);
   const list = limit ? articles.slice(0, limit) : articles;
 
@@ -83,7 +86,7 @@ export function NewsList({
                 <div className="mt-3 rounded-xl bg-card-secondary/70 p-3">
                   <div className="mb-1 flex items-center justify-between gap-2">
                     <span className="flex items-center gap-1 text-[11px] font-semibold text-primary">
-                      <Sparkles className="h-3 w-3" /> O que aconteceu?
+                      <Sparkles className="h-3 w-3" /> {t("news.whatHappened")}
                     </span>
                     <ImpactBadge impact={summary.impact} />
                   </div>
@@ -92,7 +95,7 @@ export function NewsList({
               )}
 
               <div className="mt-auto flex items-center gap-1 pt-3 text-xs text-muted-foreground">
-                Ler notícia completa
+                {t("news.readFull")}
                 <ExternalLink className="h-3 w-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </div>
             </div>

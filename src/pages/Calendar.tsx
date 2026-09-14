@@ -1,29 +1,36 @@
 import { useMemo } from "react";
 import { CalendarDays, CalendarX2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useSeo } from "@/lib/seo";
-import { CALENDAR_EVENTS, EVENT_CATEGORY_LABELS, type CalendarEvent, type EventCategory } from "@/data/events";
+import { CALENDAR_EVENTS, EVENT_CATEGORY_KEYS, type CalendarEvent } from "@/data/events";
 import { PageHeader } from "@/components/market/PageHeader";
-
-function importanceBadge(importance: CalendarEvent["importance"]) {
-  const cls =
-    importance === "alta"
-      ? "bg-danger/15 text-danger"
-      : importance === "media"
-      ? "bg-warning/15 text-warning"
-      : "bg-card-secondary text-muted-foreground";
-  const label = importance === "alta" ? "Alta" : importance === "media" ? "Média" : "Baixa";
-  return (
-    <span className={`rounded-md px-2 py-0.5 text-[11px] font-semibold ${cls}`}>{label}</span>
-  );
-}
+import { activeLocale } from "@/lib/format";
 
 export default function Calendar() {
+  const { t } = useTranslation();
   useSeo({
-    title: "Calendário Cripto 2026 — FOMC, CPI, PPI e Eventos | CryptoPulse",
-    description:
-      "Calendário de eventos que movem o mercado cripto: reuniões do FOMC, CPI, PPI e outros indicadores macro com datas oficiais.",
+    title: t("seo.calendarTitle"),
+    description: t("seo.calendarDesc"),
     path: "/calendar",
   });
+
+  const importanceBadge = (importance: CalendarEvent["importance"]) => {
+    const cls =
+      importance === "alta"
+        ? "bg-danger/15 text-danger"
+        : importance === "media"
+        ? "bg-warning/15 text-warning"
+        : "bg-card-secondary text-muted-foreground";
+    const label =
+      importance === "alta"
+        ? t("calendar.importanceHigh")
+        : importance === "media"
+        ? t("calendar.importanceMedium")
+        : t("calendar.importanceLow");
+    return (
+      <span className={`rounded-md px-2 py-0.5 text-[11px] font-semibold ${cls}`}>{label}</span>
+    );
+  };
 
   const grouped = useMemo(() => {
     const map = new Map<string, CalendarEvent[]>();
@@ -41,19 +48,19 @@ export default function Calendar() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Calendário Cripto"
-        subtitle="Eventos oficiais que costumam movimentar o mercado. As datas são reais e publicadas pelas fontes (Fed e BLS)."
+        title={t("calendar.pageTitle")}
+        subtitle={t("calendar.subtitle")}
       />
 
       {grouped.length === 0 ? (
         <div className="flex flex-col items-center gap-2 rounded-2xl border border-border/60 bg-card p-10 text-center">
           <CalendarX2 className="h-8 w-8 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">Nenhum evento agendado por enquanto.</p>
+          <p className="text-sm text-muted-foreground">{t("calendar.empty")}</p>
         </div>
       ) : (
         grouped.map(([month, events]) => {
           const [year, mon] = month.split("-");
-          const monthName = new Date(`${month}-01T00:00:00`).toLocaleDateString("pt-BR", {
+          const monthName = new Date(`${month}-01T00:00:00`).toLocaleDateString(activeLocale(), {
             month: "long",
             year: "numeric",
           });
@@ -68,29 +75,29 @@ export default function Calendar() {
                   const d = new Date(`${ev.date}T00:00:00`);
                   const isPast = ev.date < today;
                   return (
-                    <li key={`${ev.date}-${ev.title}`} className="flex flex-col gap-2 py-4 sm:flex-row sm:items-center sm:gap-4">
+                    <li key={`${ev.date}-${ev.titleKey}`} className="flex flex-col gap-2 py-4 sm:flex-row sm:items-center sm:gap-4">
                       <div className="flex w-14 shrink-0 flex-col items-center rounded-xl bg-card-secondary py-2">
                         <span className="font-display text-xl font-bold text-foreground">
                           {d.getDate().toString().padStart(2, "0")}
                         </span>
                         <span className="text-[10px] uppercase text-muted-foreground">
-                          {d.toLocaleDateString("pt-BR", { month: "short" })}
+                          {d.toLocaleDateString(activeLocale(), { month: "short" })}
                         </span>
                       </div>
                       <div className="flex-1">
                         <div className="flex flex-wrap items-center gap-2">
                           <h3 className={`text-sm font-semibold ${isPast ? "text-muted-foreground" : "text-foreground"}`}>
-                            {ev.title}
+                            {t(ev.titleKey)}
                           </h3>
                           {importanceBadge(ev.importance)}
                           <span className="rounded-md bg-card-secondary px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
-                            {EVENT_CATEGORY_LABELS[ev.category as EventCategory]}
+                            {t(EVENT_CATEGORY_KEYS[ev.category])}
                           </span>
                           {isPast ? (
-                            <span className="text-[11px] text-muted-foreground/70">concluído</span>
+                            <span className="text-[11px] text-muted-foreground/70">{t("calendar.completed")}</span>
                           ) : null}
                         </div>
-                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{ev.description}</p>
+                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{t(ev.descriptionKey)}</p>
                       </div>
                     </li>
                   );
@@ -101,10 +108,7 @@ export default function Calendar() {
         })
       )}
 
-      <p className="text-xs text-muted-foreground">
-        Token unlocks e atualizações de protocolos serão exibidos aqui assim que houver uma fonte de
-        dados oficial disponível.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("calendar.footnote")}</p>
     </div>
   );
 }

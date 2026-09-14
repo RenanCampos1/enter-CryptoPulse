@@ -1,15 +1,17 @@
+import { useTranslation } from "react-i18next";
 import { useSeo } from "@/lib/seo";
 import { useFearGreed } from "@/lib/hooks";
 import { FearGreedGauge, FearGreedHistory } from "@/components/market/FearGreedGauge";
 import { PageHeader } from "@/components/market/PageHeader";
 import { ErrorState } from "@/components/market/ErrorState";
 import { MarketShareButton } from "@/components/share/MarketShareCard";
+import { formatClock } from "@/lib/format";
 
 export default function FearGreed() {
+  const { t } = useTranslation();
   useSeo({
-    title: "Crypto Fear & Greed Index — Sentimento do Mercado Hoje | CryptoPulse",
-    description:
-      "O índice Fear & Greed do mercado de criptomoedas em tempo real: valor atual, variação diária e histórico dos últimos 30 dias.",
+    title: t("seo.fearGreedTitle"),
+    description: t("seo.fearGreedDesc"),
     path: "/fear-greed",
   });
 
@@ -19,7 +21,7 @@ export default function FearGreed() {
   const previous = history[1];
 
   if (!current) {
-    return <ErrorState lastUpdated={dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString("pt-BR") : undefined} />;
+    return <ErrorState lastUpdated={dataUpdatedAt ? formatClock(dataUpdatedAt / 1000) : undefined} />;
   }
 
   const value = Number(current.value);
@@ -29,9 +31,9 @@ export default function FearGreed() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Crypto Fear & Greed"
-        subtitle="O sentimento do mercado de criptomoedas em tempo real."
-        actions={<MarketShareButton label="Compartilhar Fear & Greed" />}
+        title={t("fearGreed.pageTitle")}
+        subtitle={t("fearGreed.subtitle")}
+        actions={<MarketShareButton label={t("fearGreed.share")} />}
       />
 
       <section className="card-glow rounded-2xl border border-border/60 bg-card p-5 md:p-8">
@@ -43,31 +45,30 @@ export default function FearGreed() {
           <div className="flex flex-col justify-center gap-4">
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-xl bg-card-secondary/70 p-4">
-                <div className="text-xs text-muted-foreground">Valor atual</div>
+                <div className="text-xs text-muted-foreground">{t("fearGreed.currentValue")}</div>
                 <div className="font-mono-nums text-3xl font-bold text-foreground">{value}</div>
                 <div className="text-xs text-muted-foreground">{current.value_classification}</div>
               </div>
               <div className="rounded-xl bg-card-secondary/70 p-4">
-                <div className="text-xs text-muted-foreground">Variação desde ontem</div>
+                <div className="text-xs text-muted-foreground">{t("fearGreed.changeSinceYesterday")}</div>
                 <div className={`font-mono-nums text-3xl font-bold ${delta !== undefined && delta >= 0 ? "text-success" : "text-danger"}`}>
                   {delta !== undefined ? `${delta >= 0 ? "+" : ""}${delta}` : "—"}
                 </div>
-                <div className="text-xs text-muted-foreground">pontos</div>
+                <div className="text-xs text-muted-foreground">{t("fearGreed.points")}</div>
               </div>
             </div>
 
             <div>
-              <div className="mb-2 text-xs text-muted-foreground">Histórico — últimos 30 dias</div>
+              <div className="mb-2 text-xs text-muted-foreground">{t("fearGreed.history")}</div>
               <div className="rounded-xl bg-card-secondary/40 p-3">
                 <FearGreedHistory history={history} />
               </div>
             </div>
 
             <div className="rounded-xl bg-card-secondary/70 p-4 text-xs leading-relaxed text-muted-foreground">
-              O <strong className="text-foreground">Fear & Greed Index</strong> (0–100) é calculado a partir
-              de volatilidade, momentum de mercado, volume e pesquisas. Valores baixos indicam medo
-              (possível pessimismo extremo); valores altos indicam ganância (possível euforia). É um
-              indicador informativo — não é recomendação de compra ou venda.
+              {t("fearGreed.explainerBefore")}{" "}
+              <strong className="text-foreground">{t("home.fngIndexName")}</strong>{" "}
+              {t("fearGreed.explainerAfter")}
             </div>
           </div>
         </div>

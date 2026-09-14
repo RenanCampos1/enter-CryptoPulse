@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { TrendingUp, TrendingDown, Minus, Info } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useGlobalData, useMarkets, useFearGreedLatest } from "@/lib/hooks";
 import { formatPercent, formatCompact } from "@/lib/format";
 
@@ -15,6 +16,7 @@ interface Factor {
 }
 
 export function MarketBias() {
+  const { t } = useTranslation();
   const { data: global } = useGlobalData();
   const { data: coins } = useMarkets(100);
   const { current } = useFearGreedLatest();
@@ -40,12 +42,12 @@ export function MarketBias() {
       : 0;
 
     return [
-      { label: "Tendência de preço (BTC 7d)", detail: formatPercent(price7d), score: priceScore, weight: 0.25 },
-      { label: "Market breadth (100 moedas)", detail: `${Math.round(breadth * 100)}% em alta`, score: breadth * 100, weight: 0.25 },
-      { label: "Fear & Greed", detail: fg !== undefined ? `${fg}/100` : "—", score: fg ?? 50, weight: 0.25 },
-      { label: "Momentum do mercado (24h)", detail: formatPercent(mcapChange), score: mcapScore, weight: 0.25 },
+      { label: t("bias.factorPrice"), detail: formatPercent(price7d), score: priceScore, weight: 0.25 },
+      { label: t("bias.factorBreadth"), detail: t("bias.breadthDetail", { value: Math.round(breadth * 100) }), score: breadth * 100, weight: 0.25 },
+      { label: t("bias.factorFearGreed"), detail: fg !== undefined ? `${fg}/100` : "—", score: fg ?? 50, weight: 0.25 },
+      { label: t("bias.factorMomentum"), detail: formatPercent(mcapChange), score: mcapScore, weight: 0.25 },
     ];
-  }, [coins, global, current]);
+  }, [coins, global, current, t]);
 
   const volatility = useMemo(() => {
     const coinsList = coins ?? [];
@@ -65,10 +67,10 @@ export function MarketBias() {
   return (
     <section className="card-glow rounded-2xl border border-border/60 bg-card p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="font-display text-lg font-bold text-foreground">Market Bias</h2>
+        <h2 className="font-display text-lg font-bold text-foreground">{t("bias.title")}</h2>
         <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
           <Info className="h-3 w-3" />
-          Indicador informativo, não é recomendação de compra ou venda.
+          {t("bias.info")}
         </span>
       </div>
 
@@ -86,17 +88,17 @@ export function MarketBias() {
             {bias === "bullish" ? (
               <span className="flex flex-col items-center">
                 <TrendingUp className="h-6 w-6" />
-                BULLISH
+                {t("bias.bullish")}
               </span>
             ) : bias === "bearish" ? (
               <span className="flex flex-col items-center">
                 <TrendingDown className="h-6 w-6" />
-                BEARISH
+                {t("bias.bearish")}
               </span>
             ) : (
               <span className="flex flex-col items-center">
                 <Minus className="h-6 w-6" />
-                NEUTRAL
+                {t("bias.neutral")}
               </span>
             )}
           </div>
@@ -105,8 +107,8 @@ export function MarketBias() {
         <div className="w-full flex-1 space-y-2">
           <div>
             <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>Score {score.toFixed(0)}/100</span>
-              <span>Volatilidade 1h média {volatility.toFixed(2)}%</span>
+              <span>{t("bias.score", { value: score.toFixed(0) })}</span>
+              <span>{t("bias.volatility", { value: volatility.toFixed(2) })}</span>
             </div>
             <div className="mt-1.5 h-2.5 overflow-hidden rounded-full bg-card-secondary">
               <div
@@ -131,10 +133,7 @@ export function MarketBias() {
       </div>
 
       <div className="mt-4 rounded-xl bg-card-secondary/60 p-3 text-xs text-muted-foreground">
-        <strong className="text-foreground">Como é calculado:</strong> média ponderada da tendência de
-        preço do Bitcoin, do market breadth (quantas moedas sobem), do Fear & Greed e do momentum do
-        market cap nas últimas 24h. Volatilidade alta reduz a confiança do sinal. Dados atuais:{" "}
-        {formatCompact(global?.total_market_cap?.usd)} de market cap.
+        <strong className="text-foreground">{t("bias.how")}</strong> {t("bias.calc", { mcap: formatCompact(global?.total_market_cap?.usd) })}
       </div>
     </section>
   );

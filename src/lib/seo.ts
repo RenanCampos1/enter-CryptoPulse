@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import i18n from "@/i18n/config";
 
 interface SeoOptions {
   title: string;
@@ -51,8 +52,12 @@ export function useSeo({ title, description, path = "/", image, type = "website"
 }
 
 export const siteName = "CryptoPulse";
-export const siteTagline = "O mercado cripto em um só lugar.";
+
+/** Tagline do site no idioma ativo. */
+export function siteTagline(): string {
+  return i18n.t("seo.tagline");
+}
 
 export function coinSeoTitle(name: string, symbol: string): string {
-  return `${name} Hoje: Cotação, Preço, Gráfico e Notícias | ${siteName}`;
+  return i18n.t("seo.coinTitle", { name, symbol, site: siteName });
 }

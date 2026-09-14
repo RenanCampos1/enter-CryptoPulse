@@ -1,9 +1,10 @@
 import { useMemo, useRef, useState } from "react";
 import { Wand2, Download, Share2, Loader2, Search } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useSeo } from "@/lib/seo";
 import { useCoinSearch, useCoinMarkets, useMarketChart } from "@/lib/hooks";
 import { useDebounce } from "@/lib/use-debounce";
-import { formatPrice, formatCompact, formatPercent, changeColorClass } from "@/lib/format";
+import { formatPrice, formatCompact, formatPercent, changeColorClass, formatDateShort } from "@/lib/format";
 import { trackPostGenerator, trackCoinSearch } from "@/lib/analytics";
 import { downloadNodeAsPng } from "@/lib/share";
 import { PageHeader } from "@/components/market/PageHeader";
@@ -15,13 +16,8 @@ import { cn } from "@/lib/utils";
 
 type Template = "classic" | "hero" | "signal";
 
-const TEMPLATES: Array<{ key: Template; label: string }> = [
-  { key: "classic", label: "Clássico" },
-  { key: "hero", label: "Hero" },
-  { key: "signal", label: "Sinal" },
-];
-
 function PostArt({ coinId, template, format }: { coinId: string; template: Template; format: ShareFormat }) {
+  const { t } = useTranslation();
   const { data: coins } = useCoinMarkets([coinId]);
   const { data: chart } = useMarketChart(coinId, "1D");
   const coin = coins?.[0];
@@ -51,13 +47,11 @@ function PostArt({ coinId, template, format }: { coinId: string; template: Templ
           <Logo compact={template === "hero"} />
         ) : (
           <span className={cn("font-display text-sm font-bold", up ? "text-success" : "text-danger")}>
-            {up ? "▲ ALTA" : "▼ QUEDA"}
+            {up ? t("postGenerator.upBadge") : t("postGenerator.downBadge")}
           </span>
         )}
         <div className="flex items-center gap-2">
-          <span className="text-[11px] text-muted-foreground">
-            {new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" })}
-          </span>
+          <span className="text-[11px] text-muted-foreground">{formatDateShort(new Date())}</span>
           {coin?.image ? (
             <img src={coin.image} alt={coin.name} crossOrigin="anonymous" className="h-6 w-6 rounded-full bg-white/20" />
           ) : null}
@@ -101,7 +95,7 @@ function PostArt({ coinId, template, format }: { coinId: string; template: Templ
       <div className={cn("relative mt-3 flex items-center justify-between", !isStory && "mt-auto")}>
         <span className="font-display text-sm font-bold text-primary">CryptoPulse</span>
         <span className={changeColorClass(coin?.price_change_percentage_24h)}>
-          {up ? "bullish" : "bearish"}
+          {up ? t("postGenerator.bullish") : t("postGenerator.bearish")}
         </span>
       </div>
     </div>
@@ -109,12 +103,18 @@ function PostArt({ coinId, template, format }: { coinId: string; template: Templ
 }
 
 export default function PostGenerator() {
+  const { t } = useTranslation();
   useSeo({
-    title: "Crypto Post Generator — Crie posts de criptomoedas grátis | CryptoPulse",
-    description:
-      "Gere artes prontas para compartilhar com preço, variação, market cap e volume de qualquer criptomoeda. Grátis.",
+    title: t("seo.postGeneratorTitle"),
+    description: t("seo.postGeneratorDesc"),
     path: "/post-generator",
   });
+
+  const templates: Array<{ key: Template; label: string }> = [
+    { key: "classic", label: t("postGenerator.templateClassic") },
+    { key: "hero", label: t("postGenerator.templateHero") },
+    { key: "signal", label: t("postGenerator.templateSignal") },
+  ];
 
   const [coinId, setCoinId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
@@ -144,8 +144,8 @@ export default function PostGenerator() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Crypto Post Generator"
-        subtitle="Escolha uma criptomoeda e gere uma arte pronta para publicar nas redes sociais. 100% gratuito."
+        title={t("postGenerator.pageTitle")}
+        subtitle={t("postGenerator.subtitle")}
       />
 
       {/* SELEÇÃO */}
@@ -155,7 +155,7 @@ export default function PostGenerator() {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Digite o nome da criptomoeda (ex.: Bitcoin, Solana, PEPE)..."
+            placeholder={t("postGenerator.placeholder")}
             className="h-11 w-full rounded-xl border border-border bg-card-secondary pl-10 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
           {isFetching && <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />}
@@ -164,7 +164,7 @@ export default function PostGenerator() {
         {query.trim().length >= 2 && (
           <div className="mt-2 max-h-64 overflow-auto rounded-xl border border-border bg-popover p-1.5">
             {(data?.coins ?? []).length === 0 && !isFetching ? (
-              <div className="px-3 py-6 text-center text-sm text-muted-foreground">Nenhuma moeda encontrada.</div>
+              <div className="px-3 py-6 text-center text-sm text-muted-foreground">{t("postGenerator.noResults")}</div>
             ) : (
               (data?.coins ?? []).map((coin) => (
                 <button
@@ -191,27 +191,24 @@ export default function PostGenerator() {
       {!coinId ? (
         <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-card p-12 text-center">
           <Wand2 className="h-8 w-8 text-primary" />
-          <p className="max-w-sm text-sm text-muted-foreground">
-            Escolha uma criptomoeda acima para gerar sua arte personalizada com preço, variação, market
-            cap, volume e gráfico.
-          </p>
+          <p className="max-w-sm text-sm text-muted-foreground">{t("postGenerator.emptyHint")}</p>
         </div>
       ) : (
         <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
           <div>
             <div className="mb-3 flex items-center gap-2">
-              {TEMPLATES.map((t) => (
+              {templates.map((tpl) => (
                 <button
-                  key={t.key}
-                  onClick={() => setTemplate(t.key)}
+                  key={tpl.key}
+                  onClick={() => setTemplate(tpl.key)}
                   className={cn(
                     "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
-                    template === t.key
+                    template === tpl.key
                       ? "bg-primary text-primary-foreground"
                       : "bg-card-secondary text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  {t.label}
+                  {tpl.label}
                 </button>
               ))}
             </div>
@@ -225,19 +222,19 @@ export default function PostGenerator() {
             <div className="mt-4 flex flex-col gap-2 sm:flex-row">
               <Button variant="default" className="flex-1" onClick={handleDownload} disabled={busy}>
                 {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-                Baixar imagem
+                {t("postGenerator.download")}
               </Button>
               <ShareCard
                 trigger={
                   <Button variant="outline-muted" className="flex-1" data-analytics-share="post">
                     <Share2 className="h-4 w-4" />
-                    Compartilhar
+                    {t("postGenerator.share")}
                   </Button>
                 }
-                dialogTitle="Compartilhar post"
-                dialogDescription="Escolha o formato e baixe ou compartilhe sua arte."
+                dialogTitle={t("postGenerator.shareDialogTitle")}
+                dialogDescription={t("postGenerator.shareDialogDesc")}
                 fileName={`cryptopulse-post-${coinId}`}
-                shareText="Post gerado no CryptoPulse — preço, variação e dados da moeda"
+                shareText={t("postGenerator.shareText")}
                 analyticsKind="post"
                 onDownloaded={() => trackPostGenerator("download", coinId, template)}
                 onShared={() => trackPostGenerator("share", coinId, template)}
@@ -248,14 +245,10 @@ export default function PostGenerator() {
           </div>
 
           <aside className="space-y-3 rounded-2xl border border-border/60 bg-card p-5 text-xs leading-relaxed text-muted-foreground">
-            <h3 className="font-display text-sm font-semibold text-foreground">Dicas de publicação</h3>
-            <p>
-              Publique o card em <strong className="text-foreground">Instagram Stories (9:16)</strong>,{" "}
-              <strong className="text-foreground">feed (1:1)</strong> ou{" "}
-              <strong className="text-foreground">X/LinkedIn (16:9)</strong>.
-            </p>
-            <p>O card inclui a marca CryptoPulse.com para quem o vir também encontrar o site.</p>
-            <p className="text-[11px]">Conteúdo informativo. Não é recomendação de investimento.</p>
+            <h3 className="font-display text-sm font-semibold text-foreground">{t("postGenerator.tipsTitle")}</h3>
+            <p>{t("postGenerator.tipsBody")}</p>
+            <p>{t("postGenerator.tipsBrand")}</p>
+            <p className="text-[11px]">{t("postGenerator.tipsDisclaimer")}</p>
           </aside>
         </div>
       )}

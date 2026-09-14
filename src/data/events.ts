@@ -2,6 +2,9 @@
 // (FOMC/Fed e divulgações do BLS). Não contém dados fabricados.
 // Token unlocks e eventos de protocolos serão adicionados quando houver
 // fonte de dados oficial disponível.
+//
+// Títulos e descrições ficam em public/locales/{lang}.json sob o namespace
+// events.* (chaves titleKey/descriptionKey).
 
 export type EventCategory =
   | "Macro"
@@ -14,77 +17,71 @@ export type EventCategory =
 
 export interface CalendarEvent {
   date: string; // ISO yyyy-mm-dd
-  title: string;
+  titleKey: string;
   category: EventCategory;
   importance: "alta" | "media" | "baixa";
-  description: string;
+  descriptionKey: string;
 }
 
 export const CALENDAR_EVENTS: CalendarEvent[] = [
   {
     date: "2026-09-15",
-    title: "Reunião do FOMC (Fed)",
+    titleKey: "events.e1.title",
     category: "Juros",
     importance: "alta",
-    description:
-      "Reunião do Comitê Federal de Mercado Aberto dos EUA (15–16 de set). Decisão de juros e comunicado. Movimenta fortemente criptomoedas e ativos de risco.",
+    descriptionKey: "events.e1.description",
   },
   {
     date: "2026-10-14",
-    title: "CPI dos EUA (Setembro)",
+    titleKey: "events.e2.title",
     category: "Macro",
     importance: "alta",
-    description:
-      "Divulgação do Índice de Preços ao Consumidor (CPI) dos EUA referente a setembro, 8h30 (ET). Dado central para expectativas de juros.",
+    descriptionKey: "events.e2.description",
   },
   {
     date: "2026-10-15",
-    title: "PPI dos EUA (Setembro)",
+    titleKey: "events.e3.title",
     category: "Macro",
     importance: "media",
-    description:
-      "Divulgação do Índice de Preços ao Produtor (PPI) dos EUA referente a setembro, 8h30 (ET). Sinal de pressão inflacionária na cadeia produtiva.",
+    descriptionKey: "events.e3.description",
   },
   {
     date: "2026-10-27",
-    title: "Reunião do FOMC (Fed)",
+    titleKey: "events.e4.title",
     category: "Juros",
     importance: "alta",
-    description:
-      "Reunião do FOMC (27–28 de out). Decisão de juros e coletiva. Alto impacto em ativos de risco.",
+    descriptionKey: "events.e4.description",
   },
   {
     date: "2026-11-13",
-    title: "PPI dos EUA (Outubro)",
+    titleKey: "events.e5.title",
     category: "Macro",
     importance: "media",
-    description:
-      "Divulgação do PPI dos EUA referente a outubro, 8h30 (ET). Indicador de inflação na indústria.",
+    descriptionKey: "events.e5.description",
   },
   {
     date: "2026-12-08",
-    title: "Reunião do FOMC (Fed)",
+    titleKey: "events.e6.title",
     category: "Juros",
     importance: "alta",
-    description:
-      "Última reunião do FOMC de 2026 (8–9 de dez), com atualização das Projeções Econômicas (SEP) e coletiva do presidente. Data de alta volatilidade.",
+    descriptionKey: "events.e6.description",
   },
   {
     date: "2026-12-15",
-    title: "PPI dos EUA (Novembro)",
+    titleKey: "events.e7.title",
     category: "Macro",
     importance: "media",
-    description:
-      "Divulgação do PPI dos EUA referente a novembro. Último indicador de inflação relevante do ano.",
+    descriptionKey: "events.e7.description",
   },
 ];
 
-export const EVENT_CATEGORY_LABELS: Record<EventCategory, string> = {
-  Macro: "Macro",
-  Juros: "Juros",
-  Regulação: "Regulação",
-  Protocolo: "Protocolo",
-  Unlock: "Token Unlock",
-  ETF: "ETF",
-  Outro: "Outro",
+/** Categoria → chave i18n (traduzida em public/locales/{lang}.json). */
+export const EVENT_CATEGORY_KEYS: Record<EventCategory, string> = {
+  Macro: "events.category.macro",
+  Juros: "events.category.juros",
+  Regulação: "events.category.regulacao",
+  Protocolo: "events.category.protocolo",
+  Unlock: "events.category.unlock",
+  ETF: "events.category.etf",
+  Outro: "events.category.outro",
 };

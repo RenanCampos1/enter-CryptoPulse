@@ -1,7 +1,8 @@
 import { Share2, TrendingUp, TrendingDown } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { useGlobalData, useMarkets, useFearGreedLatest } from "@/lib/hooks";
-import { formatCompact, formatPrice, formatPercent, changeColorClass } from "@/lib/format";
+import { formatCompact, formatPrice, formatPercent, changeColorClass, formatDateShort, formatTimeShort } from "@/lib/format";
 import { trackMarketShare } from "@/lib/analytics";
 import { Logo } from "@/components/layout/Logo";
 import { ShareCard, type ShareFormat } from "./ShareCard";
@@ -18,6 +19,7 @@ function Stat({ label, value, sub, subClass }: { label: string; value: string; s
 }
 
 export function MarketShareCardContent({ format }: { format: ShareFormat }) {
+  const { t } = useTranslation();
   const { data: global } = useGlobalData();
   const { data: coins } = useMarkets(100);
   const { current } = useFearGreedLatest();
@@ -47,20 +49,18 @@ export function MarketShareCardContent({ format }: { format: ShareFormat }) {
       <div className="relative flex items-start justify-between">
         <Logo />
         <div className="text-right text-[11px] leading-tight text-muted-foreground">
-          <div className="font-medium text-foreground">
-            {now.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" })}
-          </div>
-          <div>{now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</div>
+          <div className="font-medium text-foreground">{formatDateShort(now)}</div>
+          <div>{formatTimeShort(now)}</div>
         </div>
       </div>
 
       <div className="relative mt-3 flex items-baseline justify-between gap-2">
         <div>
-          <div className="text-xs text-muted-foreground">Total Market Cap</div>
+          <div className="text-xs text-muted-foreground">{t("share.totalMarketCap")}</div>
           <div className="font-mono-nums text-2xl font-bold">{formatCompact(mcap)}</div>
         </div>
         <div className="rounded-lg bg-card-secondary px-3 py-1.5 text-right">
-          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Fear & Greed</div>
+          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{t("share.fearGreed")}</div>
           <div className="font-mono-nums text-lg font-semibold">
             {fg !== undefined ? `${fg} / 100` : "—"}
           </div>
@@ -83,7 +83,7 @@ export function MarketShareCardContent({ format }: { format: ShareFormat }) {
 
         <div className="rounded-xl bg-card-secondary/80 px-4 py-3">
           <div className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-            <TrendingUp className="h-3 w-3 text-success" /> Top Gainer
+            <TrendingUp className="h-3 w-3 text-success" /> {t("share.topGainer")}
           </div>
           <div className="mt-0.5 truncate text-sm font-semibold text-foreground">
             {gainer ? `${gainer.symbol.toUpperCase()}` : "—"}
@@ -95,7 +95,7 @@ export function MarketShareCardContent({ format }: { format: ShareFormat }) {
 
         <div className="rounded-xl bg-card-secondary/80 px-4 py-3">
           <div className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-            <TrendingDown className="h-3 w-3 text-danger" /> Top Loser
+            <TrendingDown className="h-3 w-3 text-danger" /> {t("share.topLoser")}
           </div>
           <div className="mt-0.5 truncate text-sm font-semibold text-foreground">
             {loser ? `${loser.symbol.toUpperCase()}` : "—"}
@@ -112,27 +112,29 @@ export function MarketShareCardContent({ format }: { format: ShareFormat }) {
         } text-muted-foreground`}
       >
         <span className="font-mono-nums font-semibold text-foreground">
-          BTC Dominance {dominance !== undefined ? `${dominance.toFixed(1)}%` : "—"}
+          {t("share.btcDominance")} {dominance !== undefined ? `${dominance.toFixed(1)}%` : "—"}
         </span>
-        <span className="font-display font-semibold text-primary">CryptoPulse.com</span>
+        <span className="font-display font-semibold text-primary">{t("share.brand")}</span>
       </div>
     </div>
   );
 }
 
-export function MarketShareButton({ label = "Compartilhar mercado" }: { label?: string }) {
+export function MarketShareButton({ label }: { label?: string }) {
+  const { t } = useTranslation();
+  const resolvedLabel = label ?? t("share.marketLabel");
   return (
     <ShareCard
       trigger={
         <Button variant="default" data-analytics-share="market">
           <Share2 className="h-4 w-4" />
-          {label}
+          {resolvedLabel}
         </Button>
       }
-      dialogTitle="Compartilhar mercado"
-      dialogDescription="Baixe o card e publique no WhatsApp, Instagram, Telegram, X, Facebook ou Discord."
+      dialogTitle={t("share.marketDialogTitle")}
+      dialogDescription={t("share.marketDialogDesc")}
       fileName="cryptopulse-mercado"
-      shareText="Mercado cripto agora: BTC, ETH, Market Cap e Fear & Greed — via CryptoPulse"
+      shareText={t("share.marketShareText")}
       analyticsKind="market"
       onShared={() => trackMarketShare("1:1")}
       onDownloaded={() => trackMarketShare("1:1")}

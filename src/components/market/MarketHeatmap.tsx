@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { Treemap, ResponsiveContainer, Tooltip } from "recharts";
 import { LayoutGrid } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useMarkets } from "@/lib/hooks";
-import { formatCompact, formatPrice, formatPercent } from "@/lib/format";
+import { formatCompact, formatPrice, formatPercent, formatClock } from "@/lib/format";
 import { trackCoinClick } from "@/lib/analytics";
 import { ErrorState } from "./ErrorState";
 
@@ -98,11 +99,12 @@ function HeatTooltip({ active, payload }: HeatTooltipProps) {
 }
 
 export function MarketHeatmap() {
+  const { t } = useTranslation();
   const { data, isLoading, isError, dataUpdatedAt } = useMarkets(100);
   const navigate = useNavigate();
 
   if (isError) {
-    return <ErrorState lastUpdated={dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString("pt-BR") : undefined} />;
+    return <ErrorState lastUpdated={dataUpdatedAt ? formatClock(dataUpdatedAt / 1000) : undefined} />;
   }
 
   const heatData: HeatCoin[] = (data ?? [])
@@ -123,8 +125,8 @@ export function MarketHeatmap() {
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-card-secondary text-foreground">
             <LayoutGrid className="h-4 w-4" />
           </span>
-          <h2 className="font-display text-lg font-bold text-foreground">Heatmap do mercado</h2>
-          <span className="text-xs text-muted-foreground">tamanho = Market Cap · cor = 24h</span>
+          <h2 className="font-display text-lg font-bold text-foreground">{t("heatmap.title")}</h2>
+          <span className="text-xs text-muted-foreground">{t("heatmap.subtitle")}</span>
         </div>
       </div>
 

@@ -1,5 +1,6 @@
 import { Globe, BarChart3, Bitcoin, Coins, Gauge, Activity } from "lucide-react";
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import { useGlobalData, useFearGreedLatest, fearGreedClassification, fearGreedToneColor } from "@/lib/hooks";
 import { formatCompact, formatPercent, changeColorClass } from "@/lib/format";
 
@@ -41,6 +42,7 @@ function StatCard({
 }
 
 export function OverviewCards() {
+  const { t } = useTranslation();
   const { data: global, isError: globalError } = useGlobalData();
   const { current, previous } = useFearGreedLatest();
 
@@ -60,30 +62,30 @@ export function OverviewCards() {
     <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
       <StatCard
         icon={<Globe className="h-4 w-4" />}
-        label="Total Market Cap"
+        label={t("overview.totalMarketCap")}
         value={formatCompact(mcap)}
         sub={`24h ${formatPercent(mcapChange)}`}
         subClass={changeColorClass(mcapChange)}
       />
       <StatCard
         icon={<BarChart3 className="h-4 w-4" />}
-        label="Volume 24h"
+        label={t("overview.volume24h")}
         value={formatCompact(volume)}
-        sub={globalError ? "indisponível" : undefined}
+        sub={globalError ? t("overview.unavailable") : undefined}
       />
       <StatCard
         icon={<Bitcoin className="h-4 w-4" />}
-        label="BTC Dominance"
+        label={t("overview.btcDominance")}
         value={btcDom !== undefined ? `${btcDom.toFixed(1)}%` : "—"}
       />
       <StatCard
         icon={<Coins className="h-4 w-4" />}
-        label="ETH Dominance"
+        label={t("overview.ethDominance")}
         value={ethDom !== undefined ? `${ethDom.toFixed(1)}%` : "—"}
       />
       <StatCard
         icon={<Gauge className="h-4 w-4" />}
-        label="Fear & Greed"
+        label={t("overview.fearGreed")}
         value={fg !== undefined ? String(fg) : "—"}
         tone={fgTone ? fearGreedToneColor(fgTone.tone) : undefined}
         sub={
@@ -94,7 +96,7 @@ export function OverviewCards() {
       />
       <StatCard
         icon={<Activity className="h-4 w-4" />}
-        label="Moedas monitoradas"
+        label={t("overview.monitoredCoins")}
         value={active ? String(active) : "—"}
       />
     </div>

@@ -1,9 +1,10 @@
 import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Globe, ExternalLink, MessageCircle, TrendingUp, TrendingDown, SearchX } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useSeo, coinSeoTitle } from "@/lib/seo";
 import { useCoinDetail, useCoinMarkets, useNews, useTrending, stripHtml } from "@/lib/hooks";
-import { formatPrice, formatCompact, formatPercent, formatNumber, formatDateTime, changeColorClass } from "@/lib/format";
+import { formatPrice, formatCompact, formatPercent, formatNumber, formatDateTime, changeColorClass, activeLocale, formatClock } from "@/lib/format";
 import { PriceChart } from "@/components/market/PriceChart";
 import { ErrorState } from "@/components/market/ErrorState";
 import { NewsList } from "@/components/market/NewsList";
@@ -21,6 +22,7 @@ function StatRow({ label, value, valueClass }: { label: string; value: string; v
 }
 
 export default function CryptoDetail() {
+  const { t, i18n } = useTranslation();
   const { id = "" } = useParams();
   const { data: coin, isLoading, isError, dataUpdatedAt } = useCoinDetail(id);
   const { data: marketCoins } = useCoinMarkets([id]);
@@ -30,32 +32,33 @@ export default function CryptoDetail() {
   const symbol = coin?.symbol ?? market?.symbol ?? "";
 
   useSeo({
-    title: name ? coinSeoTitle(name, symbol) : `Criptomoeda ${id} | CryptoPulse`,
+    title: name ? coinSeoTitle(name, symbol) : t("cryptoDetail.seoTitleFallback", { id }),
     description: name
-      ? `${name} (${symbol.toUpperCase()}) hoje: cotação, preço, gráfico, market cap, volume, ATH e notícias em tempo real.`
-      : "Preços de criptomoedas em tempo real.",
+      ? t("cryptoDetail.seoDesc", { name, symbol: symbol.toUpperCase() })
+      : t("cryptoDetail.seoDescFallback"),
     path: `/crypto/${id}`,
   });
 
   const description = useMemo(() => {
     if (!coin) return "";
-    const raw = coin.description?.pt || coin.description?.en || "";
+    const langKey = i18n.resolvedLanguage === "pt-BR" ? "pt" : "en";
+    const raw = coin.description?.[langKey] ?? coin.description?.en ?? "";
     return stripHtml(raw).replace(/\s+/g, " ").trim().slice(0, 900);
-  }, [coin]);
+  }, [coin, i18n.resolvedLanguage]);
 
   if (isError && !coin) {
     return (
       <div className="flex flex-col items-center gap-4 py-16 text-center">
         <SearchX className="h-10 w-10 text-muted-foreground" />
         <div>
-          <p className="font-display text-lg font-semibold text-foreground">Criptomoeda não encontrada</p>
-          <p className="mt-1 text-sm text-muted-foreground">Verifique a URL ou busque por outra moeda.</p>
+          <p className="font-display text-lg font-semibold text-foreground">{t("cryptoDetail.notFound")}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{t("cryptoDetail.checkUrl")}</p>
         </div>
         <Link
           to="/market"
           className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
-          <ArrowLeft className="h-4 w-4" /> Ver mercado
+          <ArrowLeft className="h-4 w-4" /> {t("cryptoDetail.viewMarket")}
         </Link>
       </div>
     );
@@ -66,7 +69,7 @@ export default function CryptoDetail() {
   return (
     <div className="space-y-6">
       <Link to="/market" className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground">
-        <ArrowLeft className="h-4 w-4" /> Mercado
+        <ArrowLeft className="h-4 w-4" /> {t("cryptoDetail.backToMarket")}
       </Link>
 
       {/* CABEÇALHO */}
@@ -102,12 +105,12 @@ export default function CryptoDetail() {
                   <div className="mt-1 flex flex-wrap gap-2 text-xs">
                     {coin?.links?.homepage?.[0] ? (
                       <a href={coin.links.homepage[0]} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-primary hover:underline">
-                        <Globe className="h-3 w-3" /> Site
+                        <Globe className="h-3 w-3" /> {t("cryptoDetail.site")}
                       </a>
                     ) : null}
                     {coin?.links?.blockchain_site?.[0] ? (
                       <a href={coin.links.blockchain_site[0]} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-primary hover:underline">
-                        <ExternalLink className="h-3 w-3" /> Explorer
+                        <ExternalLink className="h-3 w-3" /> {t("cryptoDetail.explorer")}
                       </a>
                     ) : null}
                   </div>
@@ -118,7 +121,7 @@ export default function CryptoDetail() {
 
             <div className="relative mt-5 flex flex-wrap items-end gap-x-8 gap-y-3">
               <div>
-                <div className="text-xs text-muted-foreground">Preço atual</div>
+                <div className="text-xs text-muted-foreground">{t("cryptoDetail.currentPrice")}</div>
                 <div className="font-mono-nums text-3xl font-bold text-foreground sm:text-4xl">
                   {formatPrice(market?.current_price)}
                 </div>
@@ -147,18 +150,18 @@ export default function CryptoDetail() {
               <StatRow label="7d" value={formatPercent(market?.price_change_percentage_7d_in_currency)} valueClass={changeColorClass(market?.price_change_percentage_7d_in_currency)} />
               <StatRow label="30d" value={formatPercent(market?.price_change_percentage_30d_in_currency)} valueClass={changeColorClass(market?.price_change_percentage_30d_in_currency)} />
               <StatRow label="1y" value={formatPercent(md?.price_change_percentage_1y_in_currency?.usd)} valueClass={changeColorClass(md?.price_change_percentage_1y_in_currency?.usd)} />
-              <StatRow label="Market Cap" value={formatCompact(market?.market_cap)} />
-              <StatRow label="Volume 24h" value={formatCompact(market?.total_volume)} />
-              <StatRow label="Market Cap / Volume" value={market?.market_cap && market?.total_volume ? `${(market.market_cap / market.total_volume).toFixed(1)}x` : "—"} />
-              <StatRow label="FDV" value={formatCompact(market?.fully_diluted_valuation)} />
-              <StatRow label="Circulating Supply" value={market?.circulating_supply ? formatNumber(market.circulating_supply) : "—"} />
-              <StatRow label="Total Supply" value={market?.total_supply ? formatNumber(market.total_supply) : "—"} />
-              <StatRow label="Max Supply" value={market?.max_supply ? formatNumber(market.max_supply) : "—"} />
-              <StatRow label="ATH" value={`${formatPrice(market?.ath)}`} valueClass="text-success" />
-              <StatRow label="ATH %" value={formatPercent(market?.ath_change_percentage)} valueClass={changeColorClass(market?.ath_change_percentage)} />
-              <StatRow label="ATH data" value={market?.ath_date ? formatDateTime(new Date(market.ath_date).getTime() / 1000) : "—"} />
-              <StatRow label="ATL" value={formatPrice(market?.atl)} valueClass="text-danger" />
-              <StatRow label="ATL data" value={market?.atl_date ? formatDateTime(new Date(market.atl_date).getTime() / 1000) : "—"} />
+              <StatRow label={t("cryptoDetail.marketCap")} value={formatCompact(market?.market_cap)} />
+              <StatRow label={t("cryptoDetail.volume24h")} value={formatCompact(market?.total_volume)} />
+              <StatRow label={t("cryptoDetail.marketCapVolume")} value={market?.market_cap && market?.total_volume ? `${(market.market_cap / market.total_volume).toFixed(1)}x` : "—"} />
+              <StatRow label={t("cryptoDetail.fdv")} value={formatCompact(market?.fully_diluted_valuation)} />
+              <StatRow label={t("cryptoDetail.circulatingSupply")} value={market?.circulating_supply ? formatNumber(market.circulating_supply) : "—"} />
+              <StatRow label={t("cryptoDetail.totalSupply")} value={market?.total_supply ? formatNumber(market.total_supply) : "—"} />
+              <StatRow label={t("cryptoDetail.maxSupply")} value={market?.max_supply ? formatNumber(market.max_supply) : "—"} />
+              <StatRow label={t("cryptoDetail.ath")} value={`${formatPrice(market?.ath)}`} valueClass="text-success" />
+              <StatRow label={t("cryptoDetail.athPercent")} value={formatPercent(market?.ath_change_percentage)} valueClass={changeColorClass(market?.ath_change_percentage)} />
+              <StatRow label={t("cryptoDetail.athDate")} value={market?.ath_date ? formatDateTime(new Date(market.ath_date).getTime() / 1000) : "—"} />
+              <StatRow label={t("cryptoDetail.atl")} value={formatPrice(market?.atl)} valueClass="text-danger" />
+              <StatRow label={t("cryptoDetail.atlDate")} value={market?.atl_date ? formatDateTime(new Date(market.atl_date).getTime() / 1000) : "—"} />
             </div>
           </div>
         )}
@@ -166,14 +169,16 @@ export default function CryptoDetail() {
 
       {/* GRÁFICO */}
       <section className="card-glow rounded-2xl border border-border/60 bg-card p-5">
-        <h2 className="font-display mb-4 text-lg font-bold text-foreground">Gráfico de preço — {symbol.toUpperCase() || id}</h2>
+        <h2 className="font-display mb-4 text-lg font-bold text-foreground">
+          {t("cryptoDetail.chartTitle", { symbol: symbol.toUpperCase() || id })}
+        </h2>
         <PriceChart coinId={id} height={340} />
       </section>
 
       {/* SOBRE */}
       {description ? (
         <section className="card-glow rounded-2xl border border-border/60 bg-card p-5">
-          <h2 className="font-display mb-3 text-lg font-bold text-foreground">Sobre {name}</h2>
+          <h2 className="font-display mb-3 text-lg font-bold text-foreground">{t("cryptoDetail.aboutTitle", { name })}</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>
           {coin?.categories?.length ? (
             <div className="mt-4 flex flex-wrap gap-2">
@@ -187,7 +192,7 @@ export default function CryptoDetail() {
           {coin?.community_data?.twitter_followers ? (
             <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
               <MessageCircle className="h-4 w-4" />
-              {coin.community_data.twitter_followers.toLocaleString("pt-BR")} seguidores no Twitter
+              {t("cryptoDetail.twitterFollowers", { count: coin.community_data.twitter_followers.toLocaleString(activeLocale()) })}
             </div>
           ) : null}
         </section>
@@ -198,18 +203,19 @@ export default function CryptoDetail() {
 
       {/* DESTAQUES */}
       <div>
-        <h2 className="font-display mb-4 text-lg font-bold text-foreground">Moedas em destaque</h2>
+        <h2 className="font-display mb-4 text-lg font-bold text-foreground">{t("cryptoDetail.highlightedCoins")}</h2>
         <TrendingSection limit={6} />
       </div>
 
       {isError ? (
-        <ErrorState lastUpdated={dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString("pt-BR") : undefined} />
+        <ErrorState lastUpdated={dataUpdatedAt ? formatClock(dataUpdatedAt / 1000) : undefined} />
       ) : null}
     </div>
   );
 }
 
 function RelatedNews({ symbol, name }: { symbol: string; name: string }) {
+  const { t } = useTranslation();
   const { data: articles } = useNews();
   const filtered = useMemo(() => {
     if (!symbol && !name) return [];
@@ -223,7 +229,7 @@ function RelatedNews({ symbol, name }: { symbol: string; name: string }) {
 
   return (
     <section>
-      <h2 className="font-display mb-4 text-lg font-bold text-foreground">Notícias relacionadas</h2>
+      <h2 className="font-display mb-4 text-lg font-bold text-foreground">{t("cryptoDetail.relatedNews")}</h2>
       <NewsList articles={filtered} showSummaries />
     </section>
   );
