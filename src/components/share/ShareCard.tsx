@@ -1,5 +1,5 @@
 import { useRef, useState, type ReactNode } from "react";
-import { Loader2, Share2, Download } from "lucide-react";
+import { Loader2, Share2, Download, Twitter } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
   Dialog,
@@ -82,6 +82,14 @@ export function ShareCard({
     }
   };
 
+  const handleShareOnX = () => {
+    if (busy) return;
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(shareText);
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank", "noopener,noreferrer");
+    onShared?.(format);
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -146,6 +154,16 @@ export function ShareCard({
             {t("share.share")}
           </Button>
         </div>
+
+        <Button
+          variant="outline-muted"
+          className="w-full"
+          onClick={handleShareOnX}
+          disabled={busy !== null}
+        >
+          <Twitter className="h-4 w-4" />
+          {t("share.shareOnX")}
+        </Button>
         <p className="text-center text-[11px] text-muted-foreground">
           {analyticsKind === "post" ? "" : t("brand.shareFooter")}
         </p>
